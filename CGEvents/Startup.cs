@@ -42,8 +42,8 @@ namespace CGEvents
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
             
-//should move
-            var connection = @"Server=CGKarting;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
+
+            var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
             services.AddKendo();
 
