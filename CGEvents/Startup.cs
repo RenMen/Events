@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CGEvents.Models;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 
 namespace CGEvents
 {
@@ -35,17 +38,27 @@ namespace CGEvents
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+        //https://docs.telerik.com/aspnet-core/getting-started/getting-started
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            
 
-            services.AddMvc(options =>
+            var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
+            services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
+            services.AddKendo();
+
+            services                
+               .AddMvc(options =>
             {
+                //options.EnableEndpointRouting = false;
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddJsonOptions(options =>
+            options.SerializerSettings.ContractResolver = new DefaultContractResolver()); ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,12 +75,16 @@ namespace CGEvents
                 app.UseHsts();
             }
 
+            //DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
+
+            //defaultFilesOptions.DefaultFileNames.Clear();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+          
             app.UseAuthentication();
-
+            //https://stackoverflow.com/questions/51107638/asp-net-core-mvc-routing-not-working-in-visual-studio-2017-after-changing-appl
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

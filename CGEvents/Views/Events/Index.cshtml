@@ -1,0 +1,62 @@
+﻿
+@model CGEvents.Models.EventMaster
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h2>Index</h2>
+
+    <p>
+        <a asp-action="Create">Create New Event</a>
+    </p>
+</div>
+<div class="table-responsive">
+
+    @(Html.Kendo().Grid<CGEvents.Models.EventMaster>()
+                      .Name("grid")
+                          .Columns(columns =>
+                          {
+                              columns.Bound(p => p.EventName).Filterable(false);
+                              columns.Bound(p => p.Venue);
+                              columns.Bound(p => p.AckText);
+                              columns.Bound(p => p.EventId).Title("").ClientTemplate("<a href='" + Url.Action("Edit", "Events") + "/#=EventId#'><span class='btn btn-primary'>Edit</span></a> <a href='" + Url.Action("Index", "Invitee") + "?eid=#=EventId#'><span class='btn btn-primary'>Add Invitee(s)</span></a>");
+                  //columns.Bound(p => p.AckText).Format("{0:MM/dd/yyyy}");
+
+              })
+
+                          .Pageable()
+                          .Sortable()
+                          .Scrollable()
+                          .Filterable()
+                          .HtmlAttributes(new { style = "height:550px;" })
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .ServerOperation(false)
+                              .PageSize(20)
+                              .Read(read => read.Action("ReadEvents", "Events"))
+                          )
+    )
+</div>
+<script type="text/javascript">
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+        }
+    }
+
+
+    $(function () {
+        //Notice that the Name() of the Grid is used to get its client-side instance.
+        var grid = $("#grid").data("kendoGrid");
+
+    });
+</script>
