@@ -9,6 +9,7 @@ namespace CGEvents.Models
         {
             AmstransferDetails = new HashSet<AmstransferDetails>();
             GuestNames = new HashSet<GuestNames>();
+            
         }
 
         public string Fname { get; set; }
@@ -76,8 +77,10 @@ namespace CGEvents.Models
         public DateTime? IndvDeadline { get; set; }
         public string Position { get; set; }
         public bool? ActualAttendance { get; set; }
-
+        public virtual EventMaster EventIdNavigation { get; set; }
         public virtual ICollection<AmstransferDetails> AmstransferDetails { get; set; }
         public virtual ICollection<GuestNames> GuestNames { get; set; }
+     
+        
     }
 }

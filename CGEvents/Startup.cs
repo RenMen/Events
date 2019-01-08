@@ -21,9 +21,11 @@ namespace CGEvents
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IHostingEnvironment Environment { get; }
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -31,17 +33,22 @@ namespace CGEvents
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
+            if (!Environment.IsDevelopment())
+            {
+
+                services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-        //https://docs.telerik.com/aspnet-core/getting-started/getting-started
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+            }
+            //https://docs.telerik.com/aspnet-core/getting-started/getting-started
+            if (!Environment.IsDevelopment())
+            { 
+                services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
-            
+            }
             //
             var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
@@ -50,17 +57,21 @@ namespace CGEvents
             services                
                .AddMvc(options =>
             {
-                //options.EnableEndpointRouting = false;
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+                if (!Environment.IsDevelopment())
+                {
+                    //options.EnableEndpointRouting = false;
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                }
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddJsonOptions(options =>
             options.SerializerSettings.ContractResolver = new DefaultContractResolver()); ;
         }
 
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -81,9 +92,14 @@ namespace CGEvents
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
-          
-            app.UseAuthentication();
+         //   app.UseCookiePolicy();  need to remove 
+
+            if (!env.IsDevelopment())
+            {
+                app.UseAuthentication();
+                // Register external authentication middleware
+            }
+           
             //https://stackoverflow.com/questions/51107638/asp-net-core-mvc-routing-not-working-in-visual-studio-2017-after-changing-appl
             app.UseMvc(routes =>
             {

@@ -8,56 +8,58 @@
 
 <h4>Ams</h4>
 <hr />
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="row ">
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-                        <label asp-for="Fname" class="control-label"></label>
-                        <input asp-for="Fname" class="form-control" />
-                        <span asp-validation-for="Fname" class="text-danger"></span>
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row ">
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                            <label asp-for="Fname" class="control-label"></label>
+                            <input asp-for="Fname" class="form-control" />
+                            <span asp-validation-for="Fname" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                            <label asp-for="Lname" class="control-label"></label>
+                            <input asp-for="Lname" class="form-control" />
+                            <span asp-validation-for="Lname" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                            <label asp-for="EmailId" class="control-label"></label>
+                            <input asp-for="EmailId" class="form-control" />
+                            <span asp-validation-for="EmailId" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-                        <label asp-for="Lname" class="control-label"></label>
-                        <input asp-for="Lname" class="form-control" />
-                        <span asp-validation-for="Lname" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                            <label asp-for="Company" class="control-label"></label>
+                            <input asp-for="Company" class="form-control" />
+                            <span asp-validation-for="Company" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-                        <label asp-for="EmailId" class="control-label"></label>
-                        <input asp-for="EmailId" class="form-control" />
-                        <span asp-validation-for="EmailId" class="text-danger"></span>
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                            <label asp-for="Position" class="control-label"></label>
+                            <input asp-for="Position" class="form-control" />
+                            <span asp-validation-for="Position" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-                        <label asp-for="Company" class="control-label"></label>
-                        <input asp-for="Company" class="form-control" />
-                        <span asp-validation-for="Company" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-                        <label asp-for="Position" class="control-label"></label>
-                        <input asp-for="Position" class="form-control" />
-                        <span asp-validation-for="Position" class="text-danger"></span>
-                    </div>
-                </div>
-                <input type="hidden" asp-for="Id" />
-                <div class="col-lg-4">
-                    <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="EventId" />
+                    <div class="col-lg-4">
+                        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
 
-                        <label asp-for="IndvDeadline" class="control-label d-block">Start Date and Time</label>
+                            <label asp-for="IndvDeadline" class="control-label d-block">Start Date and Time</label>
 
-                        @(Html.Kendo().DateTimePicker().Name("IndvDeadline")
+                            @(Html.Kendo().DateTimePicker().Name("IndvDeadline")
                                 .Max(DateTime.Now.AddMonths(1))
                                 .Value(Model.IndvDeadline)
                                 .Events(y =>
@@ -69,52 +71,54 @@
                                 .HtmlAttributes(new { style = "width: 100%" })
                                 .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
-                        )
+                            )
 
-                        <span asp-validation-for="IndvDeadline" class="text-danger"></span>
+                            <span asp-validation-for="IndvDeadline" class="text-danger"></span>
 
+                        </div>
                     </div>
-                </div>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
-</form>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-<script>
+    <div>
 
-    function startChange() {
-        //var endPicker = $("#IndvDeadline").data("kendoDateTimePicker"),
-        //    startDate = this.value();
-        //var dlPicker = $("#FormDeadline").data("kendoDateTimePicker");
+        <a asp-action="Index" asp-route-id="@Model.EventId">Back to  @Model.EventIdNavigation.EventName Invitees List</a>
+    </div>
+}
+    <script>
+
+        function startChange() {
+            //var endPicker = $("#IndvDeadline").data("kendoDateTimePicker"),
+            //    startDate = this.value();
+            //var dlPicker = $("#FormDeadline").data("kendoDateTimePicker");
 
 
-        //if (startDate) {
-        //    startDate = new Date(startDate);
-        //    startDate.setHours(startDate.getHours() + 1);
-        //    //startDate.setDate(startDate.getDate() + 1);
-        //    endPicker.min(startDate);
-        //    dlPicker.min(startDate);
-        //}
-        //checkDlRange();
-    }
+            //if (startDate) {
+            //    startDate = new Date(startDate);
+            //    startDate.setHours(startDate.getHours() + 1);
+            //    //startDate.setDate(startDate.getDate() + 1);
+            //    endPicker.min(startDate);
+            //    dlPicker.min(startDate);
+            //}
+            //checkDlRange();
+        }
 
-    function startOpen() {
-        //var startPicker = $("#EventDate").data("kendoDateTimePicker"),
-        //    endPicker = $("#EventDateTo").data("kendoDateTimePicker"),
-        //    endDate = endPicker.value();
-        //if (endDate) {
-        //    endDate = new Date(endDate);
-        //    endDate.setHours(endDate.getHours() - 1);
-        //    //endDate.setDate(endDate.getDate() - 1);
-        //    startPicker.max(endDate);
+        function startOpen() {
+            //var startPicker = $("#EventDate").data("kendoDateTimePicker"),
+            //    endPicker = $("#EventDateTo").data("kendoDateTimePicker"),
+            //    endDate = endPicker.value();
+            //if (endDate) {
+            //    endDate = new Date(endDate);
+            //    endDate.setHours(endDate.getHours() - 1);
+            //    //endDate.setDate(endDate.getDate() - 1);
+            //    startPicker.max(endDate);
 
-        //}
-    }
-</script>
+            //}
+        }
+    </script>
 

@@ -6,6 +6,12 @@ namespace CGEvents.Models
 {
     public partial class EventMaster
     {
+        public EventMaster()
+        {
+            Ams = new HashSet<Ams>();
+        }
+
+
         [Key]
         public short EventId { get; set; }
         [Required(ErrorMessage = "Event Name Required")]
@@ -40,6 +46,6 @@ namespace CGEvents.Models
         public string MailBody { get; set; }
         [Required(ErrorMessage = "Signature Required")]
         public string MailSignature { get; set; }
-       
+        public virtual ICollection<Ams> Ams { get; set; }
     }
 }

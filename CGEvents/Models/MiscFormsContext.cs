@@ -228,6 +228,11 @@ namespace CGEvents.Models
                     .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.VisaFileName).HasMaxLength(250);
+                entity.HasOne(d => d.EventIdNavigation)
+                   .WithMany(p => p.Ams)
+                   .HasForeignKey(d => d.EventId)
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_AMS_EventMaster");
             });
 
             modelBuilder.Entity<AmstransferDetails>(entity =>

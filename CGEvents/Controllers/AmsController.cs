@@ -6,74 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CGEvents.Models;
-using Kendo.Mvc.UI;
-using Kendo.Mvc.Extensions;
 
 namespace CGEvents.Controllers
 {
-    public class InviteeController : Controller
+    public class AmsController : Controller
     {
         private readonly MiscFormsContext _context;
 
-        public InviteeController(MiscFormsContext context)
+        public AmsController(MiscFormsContext context)
         {
             _context = context;
         }
 
-        // GET: Ams/Index/
-        public IActionResult Index( int? id)
+        // GET: Ams
+        public async Task<IActionResult> Index()
         {
-           
-           return View();
+            var miscFormsContext = _context.Ams.Include(a => a.EventIdNavigation);
+            return View(await miscFormsContext.ToListAsync());
         }
-
-       private IEnumerable<Ams> GetInvitee(int? id)
-        {
-                        
-            return _context.Ams
-                 .Where(i => i.Id == id)
-                 .Select(eve =>
-                        new Ams { EventIdNavigation = eve.EventIdNavigation, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId } ).ToList();   //.Select(event => EventMa ).ToList();
-
-        }
-
-        private IEnumerable<Ams> GetInvitees(int? eid)
-        {
-
-             return _context.Ams.Include(e=>e.EventIdNavigation)
-                .Where(id => id.EventId == eid)
-                .Select(eve =>
-                        new Ams {EventIdNavigation= eve.EventIdNavigation, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
-            
-        }
-
-
-
- 
-        public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid,int? id)
-        {
-
-            if (eid == null && id == null)
-            {
-                return NotFound();
-            }
-            else if (eid != null && id == null)
-            {
-                return Json(await GetInvitees(eid).ToDataSourceResultAsync(request));
-
-            }
-            else if (id != null)
-            {
-                return Json(await GetInvitee(id).ToDataSourceResultAsync(request));
-
-            }
-            else {
-                return NotFound();
-            }
-           
-            
-        }
-
 
         // GET: Ams/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -84,6 +34,7 @@ namespace CGEvents.Controllers
             }
 
             var ams = await _context.Ams
+                .Include(a => a.EventIdNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ams == null)
             {
@@ -96,6 +47,7 @@ namespace CGEvents.Controllers
         // GET: Ams/Create
         public IActionResult Create()
         {
+            ViewData["EventId"] = new SelectList(_context.EventMaster, "EventId", "EventName");
             return View();
         }
 
@@ -104,7 +56,7 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,Company,Patel,IndvDeadline,Position")] Ams ams)
+        public async Task<IActionResult> Create([Bind("Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,EventGroupId,Company,UniqId,Patel,Atime,Adate,Dtime,Ddate,Id,AcityName,DcityName,IsRequired,OwnArrDate,OwnArrTime,OwnArrFlightNo,OwnDepDate,OwnDepTime,OwnDepFlightNo,HotelChkIn,HotelChkOut,IsVisaReq,DtSubmit,IsAttending,AttendingOpt,IsFollowupReq,IsHotelReq,Comments,IsTransferReq,Tempemail,ObflightNo,Obdate,Obetd,Obeta,Obclass,InflightNo,Indate,Inetd,Ineta,Inclass,Obsec,Insec,AirTktFileName,IsNew,IsVisaReqOpt,VisaFileName,City,Starter,Grill,Dessert,DtModified,NoOfCoAttendee,FdAllergy,AlleryDesc,AgendaFileName,IcsFileName,IndvDeadline,Position,ActualAttendance")] Ams ams)
         {
             if (ModelState.IsValid)
             {
@@ -112,26 +64,24 @@ namespace CGEvents.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["EventId"] = new SelectList(_context.EventMaster, "EventId", "EventName", ams.EventId);
             return View(ams);
         }
-    
-       // public IQueryable<Ams> AmsList{ get; set; }
-
 
         // GET: Ams/Edit/5
-        public async Task<IActionResult> Edit(int? id ) 
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);                              
-           // var ams = await _context.Ams.FindAsync(id);
+            var ams = await _context.Ams.FindAsync(id);
             if (ams == null)
             {
                 return NotFound();
             }
+            ViewData["EventId"] = new SelectList(_context.EventMaster, "EventId", "EventName", ams.EventId);
             return View(ams);
         }
 
@@ -140,7 +90,7 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,Company,Patel,IndvDeadline,Position,EventName")] Ams ams)
+        public async Task<IActionResult> Edit(int id, [Bind("Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,EventGroupId,Company,UniqId,Patel,Atime,Adate,Dtime,Ddate,Id,AcityName,DcityName,IsRequired,OwnArrDate,OwnArrTime,OwnArrFlightNo,OwnDepDate,OwnDepTime,OwnDepFlightNo,HotelChkIn,HotelChkOut,IsVisaReq,DtSubmit,IsAttending,AttendingOpt,IsFollowupReq,IsHotelReq,Comments,IsTransferReq,Tempemail,ObflightNo,Obdate,Obetd,Obeta,Obclass,InflightNo,Indate,Inetd,Ineta,Inclass,Obsec,Insec,AirTktFileName,IsNew,IsVisaReqOpt,VisaFileName,City,Starter,Grill,Dessert,DtModified,NoOfCoAttendee,FdAllergy,AlleryDesc,AgendaFileName,IcsFileName,IndvDeadline,Position,ActualAttendance")] Ams ams)
         {
             if (id != ams.Id)
             {
@@ -165,10 +115,9 @@ namespace CGEvents.Controllers
                         throw;
                     }
                 }
-
-                return RedirectToAction("Index","Invitee", new { eid = ams.EventId });
-                // return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
+            ViewData["EventId"] = new SelectList(_context.EventMaster, "EventId", "EventName", ams.EventId);
             return View(ams);
         }
 
@@ -181,6 +130,7 @@ namespace CGEvents.Controllers
             }
 
             var ams = await _context.Ams
+                .Include(a => a.EventIdNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ams == null)
             {
