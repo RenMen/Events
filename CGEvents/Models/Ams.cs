@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CGEvents.Models
 {
@@ -11,12 +12,14 @@ namespace CGEvents.Models
             GuestNames = new HashSet<GuestNames>();
             
         }
-
+        [Required(ErrorMessage = "First Name Required")]
         public string Fname { get; set; }
         public string Lname { get; set; }
         public string PassportName { get; set; }
         public string Paname { get; set; }
         public string Paemail { get; set; }
+        [Required(ErrorMessage = "Email Required")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string EmailId { get; set; }
         public short? EventId { get; set; }
         public short? EventGroupId { get; set; }

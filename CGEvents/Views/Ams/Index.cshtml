@@ -1,0 +1,413 @@
+﻿@model IEnumerable<CGEvents.Models.Ams>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Fname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Lname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PassportName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Paname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Paemail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventGroupId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UniqId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Patel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Atime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Adate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dtime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ddate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AcityName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DcityName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsRequired)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnArrDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnArrTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnArrFlightNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnDepDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnDepTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnDepFlightNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HotelChkIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HotelChkOut)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsVisaReq)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DtSubmit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAttending)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AttendingOpt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsFollowupReq)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsHotelReq)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comments)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsTransferReq)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tempemail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ObflightNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Obdate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Obetd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Obeta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Obclass)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InflightNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Indate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inetd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ineta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inclass)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Obsec)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Insec)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirTktFileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsNew)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsVisaReqOpt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VisaFileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Starter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Grill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dessert)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DtModified)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NoOfCoAttendee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FdAllergy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AlleryDesc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgendaFileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IcsFileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndvDeadline)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Position)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActualAttendance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventIdNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PassportName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Paname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Paemail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventGroupId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UniqId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Atime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dtime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ddate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DcityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsRequired)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnArrDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnArrTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnArrFlightNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnDepDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnDepTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnDepFlightNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HotelChkIn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HotelChkOut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsVisaReq)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DtSubmit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAttending)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttendingOpt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsFollowupReq)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsHotelReq)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comments)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsTransferReq)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tempemail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ObflightNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Obdate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Obetd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Obeta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Obclass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InflightNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Indate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inetd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ineta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inclass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Obsec)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Insec)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AirTktFileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsNew)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsVisaReqOpt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VisaFileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Starter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Grill)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dessert)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DtModified)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NoOfCoAttendee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FdAllergy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AlleryDesc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgendaFileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IcsFileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IndvDeadline)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualAttendance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventIdNavigation.EventName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

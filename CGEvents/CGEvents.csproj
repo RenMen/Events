@@ -20,8 +20,14 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2018.3.1017" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Views\View\" />
   </ItemGroup>
 
 </Project>

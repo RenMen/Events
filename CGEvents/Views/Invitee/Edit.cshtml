@@ -54,22 +54,22 @@
                     </div>
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="EventId" />
+                    <input type="hidden" asp-for="EventIdNavigation.EventName" />
                     <div class="col-lg-4">
                         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
 
-                            <label asp-for="IndvDeadline" class="control-label d-block">Start Date and Time</label>
+                            <label asp-for="IndvDeadline" class="control-label d-block">Deadline</label>
 
                             @(Html.Kendo().DateTimePicker().Name("IndvDeadline")
-                                .Max(DateTime.Now.AddMonths(1))
-                                .Value(Model.IndvDeadline)
-                                .Events(y =>
-                                {
-                                    y.Change("startChange");
-                                    y.Open("startOpen");
+                                        .Value(Model.IndvDeadline)
+                                        .Events(y =>
+                                        {                                           
+                                            y.Change("startChange");
+                                            y.Open("startOpen");
 
-                                })
-                                .HtmlAttributes(new { style = "width: 100%" })
-                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                             )
 
@@ -89,36 +89,29 @@
 
         <a asp-action="Index" asp-route-id="@Model.EventId">Back to  @Model.EventIdNavigation.EventName Invitees List</a>
     </div>
-}
+
     <script>
-
-        function startChange() {
-            //var endPicker = $("#IndvDeadline").data("kendoDateTimePicker"),
-            //    startDate = this.value();
-            //var dlPicker = $("#FormDeadline").data("kendoDateTimePicker");
-
-
-            //if (startDate) {
-            //    startDate = new Date(startDate);
-            //    startDate.setHours(startDate.getHours() + 1);
-            //    //startDate.setDate(startDate.getDate() + 1);
-            //    endPicker.min(startDate);
-            //    dlPicker.min(startDate);
-            //}
-            //checkDlRange();
-        }
-
         function startOpen() {
-            //var startPicker = $("#EventDate").data("kendoDateTimePicker"),
-            //    endPicker = $("#EventDateTo").data("kendoDateTimePicker"),
-            //    endDate = endPicker.value();
-            //if (endDate) {
-            //    endDate = new Date(endDate);
-            //    endDate.setHours(endDate.getHours() - 1);
-            //    //endDate.setDate(endDate.getDate() - 1);
-            //    startPicker.max(endDate);
-
-            //}
+            var startPicker = $("#IndvDeadline").data("kendoDateTimePicker");
+            startDate = new Date('@Model.EventIdNavigation.EventDate');
+            endDate = new Date('@Model.EventIdNavigation.EventDateTo');
+            today = new Date();
+            if (startDate && endDate) {
+                endDate.setHours(endDate.getHours() - 1);
+                startPicker.max(endDate);
+                if (today > startDate) {
+                    today.setHours(23, 59, 59);
+                    if (today > endDate) {
+                        startPicker.min(endDate);
+                    }
+                    else {
+                        startPicker.min(today);
+                    }
+                }
+                else  {
+                    startPicker.min(startDate);
+                }
+            }
         }
     </script>
 

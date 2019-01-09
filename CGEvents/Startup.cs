@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CGEvents.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 namespace CGEvents
 {
@@ -42,17 +44,30 @@ namespace CGEvents
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            }
+           
             //https://docs.telerik.com/aspnet-core/getting-started/getting-started
-            if (!Environment.IsDevelopment())
-            { 
+ 
                 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
             }
+
             //
-            var connection = @"Server=CGKarting3;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
             services.AddKendo();
+
+            //Refer https://stackoverflow.com/questions/41732254/gzip-in-net-core-not-working
+            // Configure Compression level
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+
+            // Add Response compression services
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.EnableForHttps = true;
+            });
+
+
 
             services                
                .AddMvc(options =>
@@ -99,7 +114,8 @@ namespace CGEvents
                 app.UseAuthentication();
                 // Register external authentication middleware
             }
-           
+            app.UseResponseCompression();
+            app.UseResponseCompression();
             //https://stackoverflow.com/questions/51107638/asp-net-core-mvc-routing-not-working-in-visual-studio-2017-after-changing-appl
             app.UseMvc(routes =>
             {

@@ -30,32 +30,34 @@ namespace CGEvents.Controllers
         //This class is used to limit sql column on both tables. see the sql profiler
         public class InviteeWithEventDetils
         {
-            public short? EventID { get; set; }
+            public short? EventId { get; set; }
             public int Id { get; set; }
-            public string FName { get; set; }
-            public string LName { get; set; }
+            public string Fname { get; set; }
+            public string Lname { get; set; }
             public string EventName { get; set; }
             public string Position { get; set; }
             public string Company { get; set; }
-            public  string EmailID { get; set; }
+            public string EmailId { get; set; }
             public short? EventGroupID { get; set; }
-        } 
+            public DateTime? EventDateTo { get; set; }
+            public DateTime? EventDate { get; set; }
+        }
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
         {
-                        
+
             return _context.Ams
                  .Where(i => i.Id == id)
                  .Select(eve =>
-                        new InviteeWithEventDetils { EventName=eve.EventIdNavigation.EventName, EventID = eve.EventId, Id = eve.Id, FName = eve.Fname, LName = eve.Lname, Position = eve.Position, Company = eve.Company, EmailID = eve.EmailId, EventGroupID= eve.EventGroupId} ).ToList();   //.Select(event => EventMa ).ToList();
+                        new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName, EventDate = eve.EventIdNavigation.EventDate, EventDateTo = eve.EventIdNavigation.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId }).ToList();   //.Select(event => EventMa ).ToList();
 
         }
 
         private IEnumerable<InviteeWithEventDetils> GetInvitees(int? eid)
         {
-               return _context.Ams
-               .Where(id => id.EventId == eid)
-               .Select(eve =>
-                       new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName, EventID = eve.EventId, Id = eve.Id, FName = eve.Fname, LName = eve.Lname, Position = eve.Position, Company = eve.Company, EmailID = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
+            return _context.Ams
+            .Where(id => id.EventId == eid)
+            .Select(eve =>
+                    new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName,EventDate=eve.EventIdNavigation.EventDate,EventDateTo=eve.EventIdNavigation.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
 
         }
 
@@ -70,7 +72,7 @@ namespace CGEvents.Controllers
 
         //}
 
-        public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid,int? id)
+        public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid, int? id)
         {
 
             if (eid == null && id == null)
@@ -87,11 +89,12 @@ namespace CGEvents.Controllers
                 return Json(await GetInvitee(id).ToDataSourceResultAsync(request));
 
             }
-            else {
+            else
+            {
                 return NotFound();
             }
-           
-            
+
+
         }
 
 
@@ -134,20 +137,21 @@ namespace CGEvents.Controllers
             }
             return View(ams);
         }
-    
-       // public IQueryable<Ams> AmsList{ get; set; }
+
+        // public IQueryable<Ams> AmsList{ get; set; }
 
 
         // GET: Ams/Edit/5
-        public async Task<IActionResult> Edit(int? id ) 
+        [HttpGet, ActionName("Edit")]
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);                              
-           // var ams = await _context.Ams.FindAsync(id);
+            var ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);
+            // var ams = await _context.Ams.FindAsync(id);
             if (ams == null)
             {
                 return NotFound();
@@ -158,10 +162,11 @@ namespace CGEvents.Controllers
         // POST: Ams/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,Company,Patel,IndvDeadline,Position,EventName")] Ams ams)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Fname,Lname,EmailId,EventId,Company,IndvDeadline,Position")] Ams ams)
         {
+
             if (id != ams.Id)
             {
                 return NotFound();
@@ -185,10 +190,10 @@ namespace CGEvents.Controllers
                         throw;
                     }
                 }
-
-                return RedirectToAction("Index","Invitee", new { eid = ams.EventId });
-                // return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Invitee", new { eid = ams.EventId });
             }
+            // return RedirectToAction(nameof(Index));
+            ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);
             return View(ams);
         }
 
@@ -227,6 +232,7 @@ namespace CGEvents.Controllers
         }
 
     }
+}
 
     
-}
+
