@@ -31,10 +31,10 @@ namespace CGEvents.Controllers
             {
                           
 
-            var lst = _context.EventMaster                
+           return _context.EventMaster                
                 .Select(eve =>
-                       new EventMaster {EventId=eve.EventId, EventName = eve.EventName,Venue=eve.Venue,AckText=eve.AckText }).ToList();   //.Select(event => EventMa ).ToList();
-            return lst;
+                       new EventMaster {EventId=eve.EventId, EventName = eve.EventName,EventDate=eve.EventDate,EventDateTo=eve.EventDateTo }).ToList();   //.Select(event => EventMa ).ToList();
+            
             }
             catch ( Exception e) 
             {
@@ -49,7 +49,7 @@ namespace CGEvents.Controllers
             return  _context.EventMaster
                 .Where(id=>id.EventId==eid)
                 .Select(eve =>
-                   new EventMaster { EventId = eve.EventId, EventName = eve.EventName, Venue = eve.Venue, AckText = eve.AckText }).ToList();   //.Select(event => EventMa ).ToList();
+                   new EventMaster { EventId = eve.EventId, EventName = eve.EventName, EventDate = eve.EventDate, EventDateTo = eve.EventDateTo }).ToList();   //.Select(event => EventMa ).ToList();
 
            
         }
@@ -58,6 +58,10 @@ namespace CGEvents.Controllers
 
         public async Task<IActionResult> ReadEvents([DataSourceRequest] DataSourceRequest request, int? eid)
         {
+            try
+            {
+
+
             if (eid != null)
             {
                 return Json(await GetEvents(eid).ToDataSourceResultAsync(request));
@@ -67,6 +71,12 @@ namespace CGEvents.Controllers
             {
                 return Json(await GetEvents().ToDataSourceResultAsync(request));
 
+            }
+            }
+            catch (Exception e)
+            {
+                Console.Write(e.Message);
+                throw;
             }
         }
         // GET: EventMasters

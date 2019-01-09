@@ -41,6 +41,7 @@ namespace CGEvents.Controllers
             public short? EventGroupID { get; set; }
             public DateTime? EventDateTo { get; set; }
             public DateTime? EventDate { get; set; }
+            public short? EventGroupId { get; set; }
         }
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
         {
@@ -117,17 +118,21 @@ namespace CGEvents.Controllers
         }
 
         // GET: Ams/Create
-        public IActionResult Create()
+        public IActionResult Create(short? eid)
         {
+            ViewData["EventGroupId"] = GetNextGroupID(eid);
             return View();
         }
-
+        public short? GetNextGroupID(short? eid)
+        {
+            return _context.Ams.Where(w => w.EventId == eid).Select(p => p.EventGroupId).Max(); 
+        }
         // POST: Ams/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Fname,Lname,PassportName,Paname,Paemail,EmailId,EventId,Company,Patel,IndvDeadline,Position")] Ams ams)
+        public async Task<IActionResult> Create([Bind("Id,EventGroupId,Fname,Lname,EmailId,EventId,Company,Position,IndvDeadline,")] Ams ams)
         {
             if (ModelState.IsValid)
             {
@@ -137,10 +142,176 @@ namespace CGEvents.Controllers
             }
             return View(ams);
         }
+        #region Grid Batch binding
+        //**********https://docs.telerik.com/aspnet-core/html-helpers/data-management/grid/editing/batch-editing.html *********
+        //****************
 
-        // public IQueryable<Ams> AmsList{ get; set; }
+        public ActionResult Invitee_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            //ToDataSourceResult works with IEnumerable and IQueryable
+            
+                IEnumerable<Ams> Invitees = _context.Ams;
+                DataSourceResult result = Invitees.ToDataSourceResult(request);
+                return Json(result);
+            
+        }
 
+        public async Task<ActionResult> Invitee_Create([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
+        {
+            var entities = new List<Ams>();
+            try
+            {
+                // Will keep the inserted entitites here. Used to return the result later.
+                
+                if (ModelState.IsValid)
+                {
+                    foreach (var Invitee in ams)
+                    {
+                        // Create a new Product entity and set its properties from the posted ProductViewModel.
+                        var entity = new Ams
+                        {
+                            Fname = Invitee.Fname,
+                            Lname = Invitee.Lname,
+                            EmailId = Invitee.EmailId,
+                            Position = Invitee.Position,
+                            IndvDeadline = Invitee.IndvDeadline,
+                            Company = Invitee.Position,
+                            EventGroupId = GetNextGroupID(Invitee.EventId)
 
+                        };
+                        // Add the entity.
+                        _context.Ams.Add(entity);
+                        // Store the entity for later use.
+                        entities.Add(entity);
+                    }
+                    // Insert the entities in the database.
+                    _context.SaveChanges();
+                    //}
+                }
+
+                // Return the inserted entities. The Grid needs the generated ProductID. Also return any validation errors.
+                return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
+                {
+                    Fname = Invitee.Fname,
+                    Lname = Invitee.Lname,
+                    EmailId = Invitee.EmailId,
+                    Position = Invitee.Position,
+                    IndvDeadline = Invitee.IndvDeadline,
+                    Company = Invitee.Position,
+                    EventGroupId = Invitee.EventGroupId
+                }));
+            }
+            catch (Exception)
+            {
+
+                // Return the inserted entities. The Grid needs the generated ProductID. Also return any validation errors.
+                return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
+                {
+                    Fname = Invitee.Fname,
+                    Lname = Invitee.Lname,
+                    EmailId = Invitee.EmailId,
+                    Position = Invitee.Position,
+                    IndvDeadline = Invitee.IndvDeadline,
+                    Company = Invitee.Position,
+                    EventGroupId = Invitee.EventGroupId
+                }));
+            }
+            
+        }
+
+        public async Task<ActionResult> Invitee_Update([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
+        {
+
+            // Will keep the inserted entitites here. Used to return the result later.
+            var entities = new List<Ams>();
+            if (ModelState.IsValid)
+            {
+                foreach (var Invitee in ams)
+                {
+                    // Create a new Product entity and set its properties from the posted ProductViewModel.
+                    var entity = new Ams
+                    {
+                        Fname = Invitee.Fname,
+                        Lname = Invitee.Lname,
+                        EmailId = Invitee.EmailId,
+                        Position = Invitee.Position,
+                        IndvDeadline = Invitee.IndvDeadline,
+                        Company = Invitee.Position,
+                        EventGroupId = Invitee.EventGroupId
+
+                    };
+                    // Store the entity for later use.
+                    entities.Add(entity);
+                    // Attach the entity.
+                    _context.Ams.Attach(entity);
+                    // Change its state to Modified so Entity Framework can update the existing product instead of creating a new one.
+                    _context.Entry(entity).State = EntityState.Modified;
+                    // Or use ObjectStateManager if using a previous version of Entity Framework.
+                    // northwind.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
+                }
+                // Update the entities in the database.
+                _context.SaveChanges();
+            }
+
+            // Return the updated entities. Also return any validation errors.
+
+            return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
+            {
+                Fname = Invitee.Fname,
+                Lname = Invitee.Lname,
+                EmailId = Invitee.EmailId,
+                Position = Invitee.Position,
+                IndvDeadline = Invitee.IndvDeadline,
+                Company = Invitee.Position,
+                EventGroupId = Invitee.EventGroupId
+            }));
+
+        }
+        public async Task<ActionResult> Invitee_Destroy([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
+        {
+             // Will keep the inserted entitites here. Used to return the result later.
+            var entities = new List<Ams>();
+            if (ModelState.IsValid)
+            {
+                foreach (var Invitee in ams)
+                {
+                    // Create a new Product entity and set its properties from the posted ProductViewModel.
+                    var entity = new Ams
+                    {
+                        Fname = Invitee.Fname,
+                        Lname = Invitee.Lname,
+                        EmailId = Invitee.EmailId,
+                        Position = Invitee.Position,
+                        IndvDeadline = Invitee.IndvDeadline,
+                        Company = Invitee.Position
+
+                    };
+                    // Store the entity for later use.
+                    entities.Add(entity);
+                    // Attach the entity.
+                    _context.Ams.Attach(entity);
+                    // Delete the entity.
+                    _context.Ams.Remove(entity);
+                        // Or use DeleteObject if using a previous versoin of Entity Framework.
+                        // northwind.Products.DeleteObject(entity);
+                    }
+                // Delete the entity in the database.
+                _context.SaveChanges();
+                }
+       
+            // Return the destroyed entities. Also return any validation errors.
+            return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
+            {
+                Fname = Invitee.Fname,
+                Lname = Invitee.Lname,
+                EmailId = Invitee.EmailId,
+                Position = Invitee.Position,
+                IndvDeadline = Invitee.IndvDeadline,
+                Company = Invitee.Position,
+                EventGroupId = Invitee.EventGroupId
+            }));
+        }
+        #endregion
         // GET: Ams/Edit/5
         [HttpGet, ActionName("Edit")]
         public async Task<IActionResult> Edit(int? id)
