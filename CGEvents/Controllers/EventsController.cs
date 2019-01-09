@@ -25,21 +25,33 @@ namespace CGEvents.Controllers
         }
 
 
-        private IEnumerable<EventMaster> GetEvents()
+        private IEnumerable<Models.EventMaster> GetEvents()
         {
+            try
+            {
+                          
 
-           return _context.EventMaster                
+            var lst = _context.EventMaster                
                 .Select(eve =>
                        new EventMaster {EventId=eve.EventId, EventName = eve.EventName,Venue=eve.Venue,AckText=eve.AckText }).ToList();   //.Select(event => EventMa ).ToList();
-           
-         }
+            return lst;
+            }
+            catch ( Exception e) 
+            {
 
-        private IEnumerable<EventMaster> GetEvents(int? eid)
+               Console.Write( e.Message);
+                return null;
+            }
+        }
+
+        private IEnumerable<Models.EventMaster> GetEvents(int? eid)
         {
-            return _context.EventMaster
+            return  _context.EventMaster
                 .Where(id=>id.EventId==eid)
                 .Select(eve =>
                    new EventMaster { EventId = eve.EventId, EventName = eve.EventName, Venue = eve.Venue, AckText = eve.AckText }).ToList();   //.Select(event => EventMa ).ToList();
+
+           
         }
 
 
@@ -94,7 +106,7 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] EventMaster eventMaster)
+        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster)
         {
             if (ModelState.IsValid)
             {
@@ -127,7 +139,7 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(short id, [Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] EventMaster eventMaster)
+        public async Task<IActionResult> Edit(short id, [Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster)
         {
            
             if (id != eventMaster.EventId)
@@ -139,7 +151,7 @@ namespace CGEvents.Controllers
             {
                 try
                 {
-                  //  eventMaster.IsActive = NullableBooleanPropertyProxy;
+                    //  eventMaster.IsActive = NullableBooleanPropertyProxy;
                     _context.Update(eventMaster);
                     await _context.SaveChangesAsync();
                 }

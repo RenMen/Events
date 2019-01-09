@@ -21,35 +21,55 @@ namespace CGEvents.Controllers
         }
 
         // GET: Ams/Index/
-        public IActionResult Index( int? id)
+        public IActionResult Index(int? id)
         {
-           
-           return View();
+
+            return View();
         }
 
-       private IEnumerable<Ams> GetInvitee(int? id)
+        //This class is used to limit sql column on both tables. see the sql profiler
+        public class InviteeWithEventDetils
+        {
+            public short? EventID { get; set; }
+            public int Id { get; set; }
+            public string FName { get; set; }
+            public string LName { get; set; }
+            public string EventName { get; set; }
+            public string Position { get; set; }
+            public string Company { get; set; }
+            public  string EmailID { get; set; }
+            public short? EventGroupID { get; set; }
+        } 
+        private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
         {
                         
             return _context.Ams
                  .Where(i => i.Id == id)
                  .Select(eve =>
-                        new Ams { EventIdNavigation = eve.EventIdNavigation, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId } ).ToList();   //.Select(event => EventMa ).ToList();
+                        new InviteeWithEventDetils { EventName=eve.EventIdNavigation.EventName, EventID = eve.EventId, Id = eve.Id, FName = eve.Fname, LName = eve.Lname, Position = eve.Position, Company = eve.Company, EmailID = eve.EmailId, EventGroupID= eve.EventGroupId} ).ToList();   //.Select(event => EventMa ).ToList();
 
         }
 
-        private IEnumerable<Ams> GetInvitees(int? eid)
+        private IEnumerable<InviteeWithEventDetils> GetInvitees(int? eid)
         {
+               return _context.Ams
+               .Where(id => id.EventId == eid)
+               .Select(eve =>
+                       new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName, EventID = eve.EventId, Id = eve.Id, FName = eve.Fname, LName = eve.Lname, Position = eve.Position, Company = eve.Company, EmailID = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
 
-             return _context.Ams.Include(e=>e.EventIdNavigation)
-                .Where(id => id.EventId == eid)
-                .Select(eve =>
-                        new Ams {EventIdNavigation= eve.EventIdNavigation, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
-            
         }
 
 
+        //private IEnumerable<Ams> GetInvitees1(int? eid)
+        //{
 
- 
+        //    return _context.Ams.Include(e => e.EventIdNavigation)
+        //       .Where(id => id.EventId == eid)
+        //       .Select(eve =>
+        //               new Ams { EventIdNavigation.EventName=eve.EventIdNavigation.EventName, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
+
+        //}
+
         public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid,int? id)
         {
 
@@ -205,5 +225,8 @@ namespace CGEvents.Controllers
         {
             return _context.Ams.Any(e => e.Id == id);
         }
+
     }
+
+    
 }
