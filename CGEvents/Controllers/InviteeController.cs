@@ -120,7 +120,12 @@ namespace CGEvents.Controllers
         // GET: Ams/Create
         public IActionResult Create(short? eid)
         {
-            ViewData["EventGroupId"] = GetNextGroupID(eid);
+            //if (eid == null)
+            //{
+            //    return NotFound("df");
+            //}
+            //ViewData["EventGroupId"] = GetNextGroupID(eid);
+
             return View();
         }
         public short? GetNextGroupID(short? eid)
@@ -146,13 +151,13 @@ namespace CGEvents.Controllers
         //**********https://docs.telerik.com/aspnet-core/html-helpers/data-management/grid/editing/batch-editing.html *********
         //****************
 
-        public ActionResult Invitee_Read([DataSourceRequest]DataSourceRequest request)
+        public async Task<ActionResult> Invitee_Read([DataSourceRequest]DataSourceRequest request,short? eid)
         {
             //ToDataSourceResult works with IEnumerable and IQueryable
             
-                IEnumerable<Ams> Invitees = _context.Ams;
-                DataSourceResult result = Invitees.ToDataSourceResult(request);
-                return Json(result);
+            IEnumerable<Ams> Invitees = await _context.Ams.Where(i => i.EventId == eid && i.EventGroupId==-1).ToListAsync(); // EventGroupId=-1 inorder to return empty row
+            DataSourceResult result = Invitees.ToDataSourceResult(request);
+               return Json(result);
             
         }
 
@@ -201,9 +206,26 @@ namespace CGEvents.Controllers
                     EventGroupId = Invitee.EventGroupId
                 }));
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                //*********************************
+                //
+                // https://stackoverflow.com/questions/17790107/how-to-return-modelstate-errors-to-kendo-grid-in-mvc-web-api-post-method
+                //
+                //****************************
+                var messageSplit = e.InnerException.Message.Split("(");
+                var messageToClient = "";
 
+                if (e.InnerException.Message.ToLower().Contains("unique key constraint"))
+                {
+                    messageToClient = "Please remove duplicate email " + messageSplit[1].Split(",")[0] + " and click 'Save Changes' ";
+                }
+                else
+                {
+                    messageToClient = e.InnerException.Message;
+                }
+               
+                ModelState.AddModelError(string.Empty, messageToClient);
                 // Return the inserted entities. The Grid needs the generated ProductID. Also return any validation errors.
                 return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
                 {
