@@ -1,53 +1,140 @@
 ﻿@model CGEvents.Models.Ams
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Invitee Details - " + ViewData["EventName"] + ViewData["EventId"];
+    ViewData["Action"] = "Events";
+    ViewData["EventIdB"] = null;
+    ViewData["CurrentPage"] = "'" + ViewData["EventName"] + "'" + " - Invitees Details";
+    ViewData["URL"] = "'" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'";
 }
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h2>Invitees</h2>
 
-    <p>
-        <a asp-action="Create">Add New Invitee</a>
-    </p>
-</div>
+@*<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h2>Invitees</h2>
+
+        <p>
+            <a asp-action="Create" asp-route-eid=@ViewData["EventId"]>Add New Invitee</a>
+        </p>
+    </div>*@
 
 <div class="table-responsive">
-
+    <div class="alert-info" id="#dvData"></div>
     @(Html.Kendo().Grid<CGEvents.Models.Ams>()
-            .Name("grdInvitee")
-                .Columns(columns =>
-                {
-                    columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
-                    columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
-                    columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
-                    columns.Bound(p => p.Position).Filterable(false).Title("Position");
-                    columns.Bound(p => p.Company).Filterable(false).Title("Company");
-                    columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
-                    columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
+                                                                    .Name("grdInvitee")
+                                                                        .Columns(columns =>
+                                                                        {
+                                                                            columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
+                                                                            columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
+                                                                            columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
+                                                                            columns.Bound(p => p.Position).Filterable(false).Title("Position");
+                                                                            columns.Bound(p => p.Company).Filterable(false).Title("Company");
+                                                                            columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
+                                                                            columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
 
-    })
+                                                                        })
+                                                                        .ToolBar(toolbar =>
+                                                                        {
+                                                                            toolbar.ClientTemplate("<a class='k-button' href='" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'>Add New Invitee(s)</a>" +
+                                                                                "<div class='toolbar'> <span class='k-button' id='btnImport'>Import Invitees List</a></div>");
+                                                                        })
 
-                .Pageable()
-                .Sortable()
-                .Scrollable()
-                .Filterable()                                         
-                .HtmlAttributes(new { style = "height:550px;" })
-                .DataSource(dataSource => dataSource
-                    .Ajax()
-                    .ServerOperation(false)
-                    .PageSize(20)                                              
-                    .Read(read => read.Action("ReadInvitees", "Invitee").Data("getUrlParameter") )
-                                              
-                )
+                                                            .Pageable()
+                                                            .Sortable()
+                                                            .Scrollable()
+                                                            .Filterable()
+                                                            .HtmlAttributes(new { style = "height:550px;" })
+                                                            .DataSource(dataSource => dataSource
+                                                            .Ajax()
+                                                            .ServerOperation(false)
+                                                            .PageSize(20)
+                                                            .Read(read => read.Action("ReadInvitees", "Invitee").Data("getUrlParameter"))
+
+                                                            )
     )
 </div>
+
+
+@(Html.Kendo().Window()
+                        .Name("window")
+                       
+                    .Title("Upload")
+                    .Content(@<text>
+                        <h4>Upload</h4>
+
+                        <div class="row" id="window">
+                            <div class="col-md-4">
+                                <input type="file" id="fUpload" name="files" class="form-control" />
+                            </div>
+                            <div class="col-md-8">
+                                <input type="button" id="btnUpload" value="Upload" class="k-button" />
+                            </div>
+                        </div>
+
+                    </text>)
+                                        .Draggable()
+                                        .Resizable()
+                                        .Width(600)
+                                        .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+
+                    //.Events(ev => ev.Close("onClose"))
+)
+
+
+
 <script type="text/javascript">
     $(function () {
         //Notice that the Name() of the Grid is used to get its client-side instance.
         var grid = $("#grdInvitee").data("kendoGrid");
+       
+    });
+
+    $("#btnImport").bind("click", function () {
+        $("#window").data("kendoWindow").open();
 
     });
+
+     $('#btnUpload').on('click', function () {
+            var fileExtension = ['xls', 'xlsx'];
+            var filename = $('#fUpload').val();
+            if (filename.length == 0) {
+                alert("Please select a file.");
+                return false;
+            }
+            else {
+                var extension = filename.replace(/^.*\./, '');
+                if ($.inArray(extension, fileExtension) == -1) {
+                    alert("Please select only excel files.");
+                    return false;
+                }
+            }
+            var fdata = new FormData();
+            var fileUpload = $("#fUpload").get(0);
+            var files = fileUpload.files;
+            var handler = "/Invitee/Create?eid="+ @ViewData["EventId"];
+            fdata.append(files[0].name, files[0]);
+            $.ajax({
+                type: "POST",
+                url: handler,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: fdata,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.length == 0)
+                        alert('Some error occured while uploading');
+                    else {
+                        $('#dvData').html(response);
+                    }
+                },
+                error: function (e) {
+                    $('#dvData').html(e.responseText);
+                }
+            });
+        })
+
 
     function getUrlParameter() {
         var name = 'eid';
@@ -57,7 +144,7 @@
 
         if (results === null) {
             document.location.href = "/Events";
-          }
+        }
         else {
             results = results === null ? { eid: null } : { eid: decodeURIComponent(results[1].replace(/\+/g, ' ')) };
             return results;
@@ -66,4 +153,16 @@
 
     };
 
+
+    $(document).ready(function () {
+
+    });
+
+
+
 </script>
+<style>
+    .toolbar {
+        float: right;
+    }
+</style>

@@ -17,13 +17,13 @@
                       .Name("grid")
                           .Columns(columns =>
                           {
-                              columns.Bound(p => p.EventName).Filterable(false);
-                              columns.Bound(p => p.Venue);
-                              columns.Bound(p => p.AckText);
-                              columns.Bound(p => p.EventId).Title("").ClientTemplate("<a href='" + Url.Action("Edit", "Events") + "/#=EventId#'><span class='btn btn-primary'>Edit</span></a> <a href='" + Url.Action("Index", "Invitee") + "?eid=#=EventId#'><span class='btn btn-primary'>Add Invitee(s)</span></a>");
-                  //columns.Bound(p => p.AckText).Format("{0:MM/dd/yyyy}");
+                          columns.Bound(p => p.EventName).Filterable(false);
+                          columns.Bound(p => p.Venue);
+                          columns.Bound(p => p.AckText);
+                          columns.Bound(p => p.EventId).Title("").ClientTemplate("<a href='" + Url.Action("Edit", "Events") + "/#=EventId#'><span class='btn btn-primary'>Edit</span></a> <a href='" + Url.Action("Index", "Invitee") + "?eid=#=EventId#'><span class='btn btn-primary'>Add Invitee(s)</span></a>");
+            //columns.Bound(p => p.AckText).Format("{0:MM/dd/yyyy}");
 
-              })
+        })
 
                           .Pageable()
                           .Sortable()

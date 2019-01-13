@@ -21,9 +21,20 @@ namespace CGEvents.Controllers
         }
 
         // GET: Ams/Index/
-        public IActionResult Index(int? id)
-        {
+        //public IActionResult Index(int? id)
+        //{
 
+        //    return View();
+        //}
+
+        public IActionResult Index(short? eid)
+        {
+            if (eid == null)
+            {
+                return NotFound();
+            }
+            ViewData["EventId"] = eid;
+            ViewData["EventName"] = GetEventName(eid);
             return View();
         }
 
@@ -120,33 +131,41 @@ namespace CGEvents.Controllers
         // GET: Ams/Create
         public IActionResult Create(short? eid)
         {
-            //if (eid == null)
-            //{
-            //    return NotFound("df");
-            //}
+            if (eid == null)
+            {
+                return NotFound();
+            }
             //ViewData["EventGroupId"] = GetNextGroupID(eid);
-
+            ViewData["EventName"] = GetEventName(eid);
+            ViewData["EventId"] = eid;
             return View();
         }
         public short? GetNextGroupID(short? eid)
         {
             return _context.Ams.Where(w => w.EventId == eid).Select(p => p.EventGroupId).Max(); 
         }
+
+        public string GetEventName(short? eid)
+        {
+
+            return _context.Ams.Include(s=>s.EventIdNavigation).Where(w => w.EventId == eid).FirstOrDefault().EventIdNavigation.EventName;
+        }
+
         // POST: Ams/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EventGroupId,Fname,Lname,EmailId,EventId,Company,Position,IndvDeadline,")] Ams ams)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(ams);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(ams);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,EventGroupId,Fname,Lname,EmailId,EventId,Company,Position,IndvDeadline,")] Ams ams)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(ams);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(ams);
+        //}
         #region Grid Batch binding
         //**********https://docs.telerik.com/aspnet-core/html-helpers/data-management/grid/editing/batch-editing.html *********
         //****************

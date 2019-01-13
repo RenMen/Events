@@ -1,13 +1,13 @@
 ﻿@model CGEvents.Models.Ams
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Invitees - " + ViewData["EventName"];
+    ViewData["Action"] = "Index";
+    ViewData["EventIdB"] = ViewData["EventId"];
+    ViewData["EventName"] = ViewData["EventName"];
+    ViewData["CurrentPage"] = "Create Invitee(s)";
 }
 
-<h1>Create</h1>
-
-<h4>Ams</h4>
-<hr />
 <style>
     .col-template-val {
         margin: 0 0 1em .5em;
@@ -15,82 +15,65 @@
 </style>
 <div class="table-responsive">
     @(Html.Kendo().Grid<CGEvents.Models.Ams>()
-            .Name("Grid")            
-            .Columns(columns =>
-            {
-                columns.Bound(p => p.Fname).Filterable(false).Title("First Name").Width(150).Media("(min-width: 600px)"); ;
-                columns.Bound(p => p.Lname).Filterable(false).Title("Last Name").Width(100).Media("(min-width: 600px)"); ;
-                columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID").Width(200).Media("(min-width: 600px)"); ;
-                columns.Bound(p => p.Position).Filterable(false).Title("Position").Media("(min-width:1000px)");
-                columns.Bound(p => p.Company).Filterable(false).Title("Company").Width(250).Media("(min-width: 850px)");
-                columns.Bound(p => p.IndvDeadline).Title("Deadline").Width(150).Media("(min-width:1000px)");
-                //columns.Bound(p => p.EventGroupId).Filterable(false).Title("EventGroupID");
-                columns.Command(command => command.Destroy()).Width(150); // The "destroy" command removes data items.
-               // columns.Template("#=resColTemplate(data)#").Title("Items").Media("(max-width: 450px)");
-            })
-                                .ToolBar(toolbar =>
-                                {
-                                    toolbar.Create();// The "create" command adds new data items.
-                                    toolbar.Save();// The "save" command saves the changed data items.
-                                })
-                                .Editable(editable => editable.Mode(GridEditMode.InCell))// Use in-cell editing mode.
-                                .Pageable()
-                                .Navigatable()
-                                .Sortable()
-                                .Scrollable()
-                                .DataSource(dataSource => dataSource
-                                    .Ajax()
-                                    .Batch(true)// Enable batch updates.
-                                    .PageSize(20)
-                                    .ServerOperation(false)
-                                    .Events(events => events.Error("error_handler"))
-                                    .Model(model =>
-                                    {
-                                        model.Id(id => id.Id); // Specify the property which is the unique identifier of the model.
-                                        model.Field(Ed => Ed.EventId).Editable(false); // Make the EventID property not editable.
+                        .Name("Grid")
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.Fname).Filterable(false).Title("First Name").Width(250).Media("(min-width: 600px)"); ;
+                            columns.Bound(p => p.Lname).Filterable(false).Title("Last Name").Width(200).Media("(min-width: 600px)"); ;
+                            columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID").Width(300).Media("(min-width: 600px)"); ;
+                    // columns.Bound(p => p.Position).Filterable(false).Title("Position").Media("(min-width:1000px)");
+                    columns.Bound(p => p.Company).Filterable(false).Title("Company").Width(250).Media("(min-width: 1000px)");
+                            columns.Bound(p => p.IndvDeadline).Title("Deadline").Width(200).Media("(min-width:1000px)");
+                    //columns.Bound(p => p.EventGroupId).Filterable(false).Title("EventGroupID");
+                    columns.Command(command => command.Destroy()).Width(150); // The "destroy" command removes data items.
+                                                                              // columns.Template("#=resColTemplate(data)#").Title("Items").Media("(max-width: 450px)");
+                })
+                            .ToolBar(toolbar =>
+                            {
+                                toolbar.Create();// The "create" command adds new data items.
+                        toolbar.Save();// The "save" command saves the changed data items.
+                    })
+                    .Editable(editable => editable.Mode(GridEditMode.InCell))// Use in-cell editing mode.
+                    .Pageable()
+                    .Navigatable()
+                    .Sortable()
+                    .Scrollable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)// Enable batch updates.
+                        .PageSize(20)
+                        .ServerOperation(false)
+                        .Events(events => events.Error("error_handler"))
+                        .Model(model =>
+                        {
+                            model.Id(id => id.Id); // Specify the property which is the unique identifier of the model.
+                    model.Field(Ed => Ed.EventId).Editable(false); // Make the EventID property not editable.
 
-                                    })
-                                    .Create("Invitee_Create", "Invitee")// Action method invoked when the user saves a new data item.
-                                                                        //.Read(read => read.Action("Invitee_Read", "Invitee").Data("getUrlParameter"))
-                                    .Read("Invitee_Read", "Invitee")// Action method invoked when the grid needs data.
-                                    .Update("Invitee_Update", "Invitee")// Action method invoked when the user saves an updated data item.
-                                    .Destroy("Invitee_Destroy", "Invitee")// Action method invoked when the user removes a data item.
-                                )
+                })
+                        .Create("Invitee_Create", "Invitee")// Action method invoked when the user saves a new data item.
+                                                            //.Read(read => read.Action("Invitee_Read", "Invitee").Data("getUrlParameter"))
+                        .Read("Invitee_Read", "Invitee")// Action method invoked when the grid needs data.
+                        .Update("Invitee_Update", "Invitee")// Action method invoked when the user saves an updated data item.
+                        .Destroy("Invitee_Destroy", "Invitee")// Action method invoked when the user removes a data item.
+                            )
     )
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+
+    <a asp-action="Index" asp-route-eid=@ViewData["EventId"]>Back to Invitees List</a>
 </div>
 @(Html.Kendo().Window()
-                .Name("alertWindow")
-                .Title("Status Message from Server")
-                .Draggable()
-                .Resizable()
-                .Width(400)
-                .Height(200)
-                .Modal(true)
-                .Visible(false)
+                                    .Name("alertWindow")
+                                    .Title("Batch not saved")
+                                    .Draggable()
+                                    .Resizable()
+                                    .Width(400)
+                                    .Height(200)
+                                    .Modal(true)
+                                    .Visible(false)
 )
 
-@*Template for small screen*@
-@*<script id="responsive-column-template" type="text/x-kendo-template">
-    <strong>First Name</strong>
-    <p class="col-template-val">#=data.FName#</p>
-
-    <strong>Last Name</strong>
-    <p class="col-template-val">#=data.LName#</p>
-
-    <strong>Email Address</strong>
-    <p class="col-template-val">#=data.EmailId#</p>
-
-    <strong>Company</strong>
-    <p class="col-template-val">#=data.Company#</p>
-</script>
-
-<script>
-    var resColTemplate = kendo.template($("#responsive-column-template").html());
-</script>*@
 
 <script type="text/javascript">
     function showAlertWindow(message) {
