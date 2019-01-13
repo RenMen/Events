@@ -20,29 +20,33 @@
         <li class="nav-title">Events</li>
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
-                <i class="nav-icon icon-puzzle"></i> Admin
+                <i class="nav-icon icon-event"></i> Event
             </a>
             <ul class="nav-dropdown-items">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Create">
-                        <i class="nav-icon icon-puzzle"></i> Create New
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Edit" asp-route-id="10">
-                        <i class="nav-icon icon-puzzle"></i> Modify
-                    </a>
-                </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index" >
-                        <i class="nav-icon icon-puzzle"></i> List
+                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
+                        <i class="nav-icon icon-list"> Add/Edit/List </i>
                     </a>
                 </li>
 
             </ul>
         </li>
         <li class="divider"></li>
+        <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+                <i class="nav-icon icon-people"></i> Invitee
+            </a>
+            <ul class="nav-dropdown-items">
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
+                        <i class="nav-icon icon-list">Add/Edit/List</i>
+                    </a>
+                </li>
+
+            </ul>
+        </li>
         @*<li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-cursor"></i> Buttons

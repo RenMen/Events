@@ -5,7 +5,7 @@
     ViewData["Action"] = "Events";
     ViewData["EventIdB"] = null;
     ViewData["CurrentPage"] = "'" + ViewData["EventName"] + "'" + " - Invitees Details";
-    ViewData["URL"] = "'" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'";
+    
 }
 
 
@@ -19,81 +19,99 @@
 
 <div class="table-responsive">
     <div class="alert-info" id="#dvData"></div>
-    @(Html.Kendo().Grid<CGEvents.Models.Ams>()
-                                                                    .Name("grdInvitee")
-                                                                        .Columns(columns =>
-                                                                        {
-                                                                            columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
-                                                                            columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
-                                                                            columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
-                                                                            columns.Bound(p => p.Position).Filterable(false).Title("Position");
-                                                                            columns.Bound(p => p.Company).Filterable(false).Title("Company");
-                                                                            columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
-                                                                            columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
+   
+           @(Html.Kendo().Grid<CGEvents.Models.Ams>()
+        .Name("grdInvitee")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
+                columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
+                columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
+                columns.Bound(p => p.Position).Filterable(false).Title("Position");
+                columns.Bound(p => p.Company).Filterable(false).Title("Company");
+                columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
+                columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
 
-                                                                        })
-                                                                        .ToolBar(toolbar =>
-                                                                        {
-                                                                            toolbar.ClientTemplate("<a class='k-button' href='" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'>Add New Invitee(s)</a>" +
-                                                                                "<div class='toolbar'> <span class='k-button' id='btnImport'>Import Invitees List</a></div>");
-                                                                        })
+            })
+            .ToolBar(toolbar =>
+            {
+                toolbar.ClientTemplate("<a class='k-button' href='" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'>Add New Invitee(s)</a>" +
+                    "<div class='toolbar'> <input class='k-button' type='button' id='btnImport' value='Import Invitees List'/>  </div>");
+            })
+        .Pageable()
+        .Sortable()
+        .Scrollable()
+        .Filterable()
+        .HtmlAttributes(new { style = "height:550px;" })
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .ServerOperation(false)
+        .PageSize(20)
+        .Read(read => read.Action("ReadInvitees", "Invitee").Data("getUrlParameter"))
 
-                                                            .Pageable()
-                                                            .Sortable()
-                                                            .Scrollable()
-                                                            .Filterable()
-                                                            .HtmlAttributes(new { style = "height:550px;" })
-                                                            .DataSource(dataSource => dataSource
-                                                            .Ajax()
-                                                            .ServerOperation(false)
-                                                            .PageSize(20)
-                                                            .Read(read => read.Action("ReadInvitees", "Invitee").Data("getUrlParameter"))
-
-                                                            )
+        )
     )
 </div>
 
-
 @(Html.Kendo().Window()
-                        .Name("window")
+        .Name("window")
                        
-                    .Title("Upload")
-                    .Content(@<text>
-                        <h4>Upload</h4>
+    .Title("Upload")
+    .Content(@<text>
+        <h4>Upload</h4>
 
-                        <div class="row" id="window">
-                            <div class="col-md-4">
-                                <input type="file" id="fUpload" name="files" class="form-control" />
-                            </div>
-                            <div class="col-md-8">
-                                <input type="button" id="btnUpload" value="Upload" class="k-button" />
-                            </div>
-                        </div>
+        @*<div class="row" id="window">
+            <div class="col-md-4">
+                <input type="file" id="fUpload" name="files" class="form-control" />
+            </div>
+            <div class="col-md-8">
+                <input type="button" id="btnUpload" value="Upload" class="k-button" />
+            </div>
+        </div>*@
 
-                    </text>)
-                                        .Draggable()
-                                        .Resizable()
-                                        .Width(600)
-                                        .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+        @*<div class="input-group">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="btnUpload">Button</button>
+            </div>
+        </div>*@
 
+        <div class="input-group mb-3">
+           <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile01" value="" aria-describedby="inputGroupFileAddon01">
+                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+            </div>
+            <div class="input-group-append">
+                <span class="input-group-text" id="inputGroupFileAddon04">Upload</span>
+            </div>
+        </div>
+
+    </text>)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Actions(actions => actions.Pin().Minimize().Maximize().Close())
+    .Modal(true)
+    .Visible(false)
                     //.Events(ev => ev.Close("onClose"))
 )
-
-
 
 <script type="text/javascript">
     $(function () {
         //Notice that the Name() of the Grid is used to get its client-side instance.
-        var grid = $("#grdInvitee").data("kendoGrid");
-       
-    });
+       // var grid = $("#grdInvitee").data("kendoGrid");
 
-    $("#btnImport").bind("click", function () {
-        $("#window").data("kendoWindow").open();
 
-    });
+        //https://docs.telerik.com/aspnet-mvc/getting-started/fundamentals
+        //refer above link - why the below function should not move out of documen ready
+        $("#btnImport").on("click", function () {
+            showAlertWindow();
+        });
 
-     $('#btnUpload').on('click', function () {
+         @*$('#btnUpload').on('click', function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#fUpload').val();
             if (filename.length == 0) {
@@ -133,8 +151,23 @@
                     $('#dvData').html(e.responseText);
                 }
             });
-        })
+        })*@
 
+
+    });
+
+    
+
+    function showAlertWindow() {
+      
+        var alertWindow = $('#window').data('kendoWindow');
+        //alertWindow.content(message);
+        alertWindow.refresh();
+        alertWindow.center();
+        alertWindow.open();
+    }
+
+    
 
     function getUrlParameter() {
         var name = 'eid';
@@ -153,16 +186,12 @@
 
     };
 
-
-    $(document).ready(function () {
-
-    });
-
-
-
 </script>
 <style>
     .toolbar {
         float: right;
+    }
+    .custom-file-label {
+        box-sizing: border-box !important;
     }
 </style>
