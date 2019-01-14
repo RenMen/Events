@@ -1,0 +1,51 @@
+﻿@model CGEvents.Models.Ams
+
+@{
+    ViewData["Title"] = "Invitee Details - "; //+ ViewData["EventName"];
+    ViewData["Action"] = "Invitee";
+    ViewData["EventIdB"] = null;
+    ViewData["CurrentPage"] = "'"; //+ ViewData["EventName"] + "'" + " - Invitees Details";
+
+}
+
+
+<div class="table-responsive">
+    
+
+
+    @(Html.Kendo().Upload()
+            .Name("files")
+            .Async(a => a
+                .Save("Async_Save", "Upload")
+                .Remove("Async_Remove", "Upload")
+                .AutoUpload(true)
+            )
+
+                .Events(events => events
+            .Success("onSuccess")
+            .Select("onSelect")
+                                        )
+    )
+
+
+    <div class="box">
+        <h4>Console log</h4>
+        <div class="console" id="UploadStatusConsole"></div>
+    </div>
+
+</div>
+   
+<script>
+    function onSuccess(e) {
+        $('#UploadStatusConsole').html(e.response.Content);
+        $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
+    };
+
+    function onSelect(e) {
+        var uploadWidget = $("#files").getKendoUpload();
+        uploadWidget.clearAllFiles();
+        $('#UploadStatusConsole').html('');
+    };
+
+
+</script>

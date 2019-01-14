@@ -28,6 +28,7 @@ namespace CGEvents
         {
             Configuration = configuration;
             Environment = env;
+           
         }
 
         public IConfiguration Configuration { get; }
@@ -52,7 +53,7 @@ namespace CGEvents
             }
 
             //
-            var connection = @"Server=CGKarting3;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
             services.AddKendo();
 

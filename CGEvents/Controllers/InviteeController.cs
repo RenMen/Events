@@ -8,16 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using CGEvents.Models;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+
 
 namespace CGEvents.Controllers
 {
     public class InviteeController : Controller
     {
         private readonly MiscFormsContext _context;
+       
 
         public InviteeController(MiscFormsContext context)
         {
             _context = context;
+      
         }
 
         // GET: Ams/Index/
@@ -442,6 +447,9 @@ namespace CGEvents.Controllers
         {
             return _context.Ams.Any(e => e.Id == id);
         }
+
+       
+
 
     }
 }

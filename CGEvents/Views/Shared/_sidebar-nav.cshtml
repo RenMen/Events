@@ -17,7 +17,7 @@
             <i class="nav-icon icon-pencil"></i> Typography
           </a>
         </li>*@
-        <li class="nav-title">Events</li>
+        @*<li class="nav-title">Events</li>*@
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-event"></i> Event
@@ -26,7 +26,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
-                        <i class="nav-icon icon-list"> Add/Edit/List </i>
+                        <i class="nav-icon icon-basket"> Add/Edit/List </i>
                     </a>
                 </li>
 
@@ -41,7 +41,12 @@
 
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
-                        <i class="nav-icon icon-list">Add/Edit/List</i>
+                        <i class="nav-icon icon-basket">Add/Edit/List</i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Upload" asp-action="Index">
+                        <i class="nav-icon icon-arrow-up-circle">Upload</i>
                     </a>
                 </li>
 
