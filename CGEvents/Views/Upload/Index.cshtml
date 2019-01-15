@@ -10,42 +10,68 @@
 
 
 <div class="table-responsive">
-    
-
-
-    @(Html.Kendo().Upload()
-            .Name("files")
-            .Async(a => a
-                .Save("Async_Save", "Upload")
-                .Remove("Async_Remove", "Upload")
-                .AutoUpload(true)
-            )
-
-                .Events(events => events
-            .Success("onSuccess")
-            .Select("onSelect")
-                                        )
-    )
-
-
-    <div class="box">
-        <h4>Console log</h4>
-        <div class="console" id="UploadStatusConsole">@ViewData["Import Error"]</div>
+    <div class="card border-info mb-3" style="max-width: 100%;">
+        <div class="card-header">Select an event</div>
+        <div class="card-body text-info">
+            
+            <p class="card-text">
+                @(Html.Kendo().DropDownList()
+                    .Name("Event")
+                    .DataTextField("EventName")
+                    .DataValueField("EventId")
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                            {
+                                read.Action("GetEvents", "Upload");
+                            });
+                    })
+                    .HtmlAttributes(new { style = "width: 100%" })
+                )
+            </p>
+        </div>
     </div>
+    <p class="card-text">
+        @(Html.Kendo().Upload()
+                                    .Name("files")
+                                    .Async(a => a
+                                        .Save("Async_Save", "Upload")
+                                        .Remove("Async_Remove", "Upload")
+                                        .AutoUpload(true)
+                                    )
 
-</div>
-   
-<script>
-    function onSuccess(e) {
-        $('#UploadStatusConsole').html(e.response.Content);
-        $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
-    };
+                                    .Events(events => events
+                                    .Success("onSuccess")
+                                    .Select("onSelect")
+                                    .Upload(@<text>
+                                        function(e) {
+                                        e.data = { eid:$("#Event").val()};
+                                        }
+                                    </text>)
+                                                                                                                                                                                                                                                                                                                                                                        )
+        )
 
-    function onSelect(e) {
-        var uploadWidget = $("#files").getKendoUpload();
-        uploadWidget.clearAllFiles();
-        $('#UploadStatusConsole').html('');
-    };
+        <div class="box">
+
+            <h4>Console log</h4>
+            <div class="console" id="UploadStatusConsole">@ViewData["Import Error"]</div>
+        </div>
+    </p>
+        </div>
 
 
-</script>
+    <script>
+        function onSuccess(e) {
+
+            $('#UploadStatusConsole').html(e.response.Content);
+            $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
+        };
+
+        function onSelect(e) {
+            var uploadWidget = $("#files").getKendoUpload();
+            uploadWidget.clearAllFiles();
+            $('#UploadStatusConsole').html('');
+        };
+
+
+    </script>

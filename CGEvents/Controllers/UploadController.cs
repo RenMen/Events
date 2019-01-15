@@ -16,15 +16,17 @@ using NPOI.XSSF.UserModel;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using System.Globalization;
+using System.Threading;
 
 namespace CGEvents.Controllers
 {
-   
+
     public class UploadController : Controller
     {
         private IHostingEnvironment _env;
         private readonly MiscFormsContext _context;
-
+        public Regex regex = new Regex("(?:[^a-z0-9 ]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         public class MandatoryColumns
         {
             public int colIndex;
@@ -37,8 +39,8 @@ namespace CGEvents.Controllers
             public string Email;
             public string Position;
             public string Company;
-            public string EventGroupId;
-            public string EventId;
+            public short EventGroupId;
+            public short EventId;
             public DateTime IndividualDeadline;
         }
         public UploadController(MiscFormsContext context, IHostingEnvironment env)
@@ -56,15 +58,37 @@ namespace CGEvents.Controllers
             return View();
         }
 
-        // GET: Upload/Details/5
-        public ActionResult Async_Save(IEnumerable<IFormFile> files)
+        public class EventDropDownModel
         {
+            public string EventName { get; set; }
 
+            public int EventId { get; set; }
+        }
+
+        public ActionResult GetEvents()
+        {
+            var EventsDropDownList = _context.EventMaster.Select(e => new EventDropDownModel
+            {
+                EventName = e.EventName,
+                EventId = e.EventId
+            });
+
+            return Json(EventsDropDownList);
+            //    products = products.Where(p => p.ProductName.Contains(text));
+
+            //return Json(products, JsonRequestBehavior.AllowGet);
+        }
+        // GET: Upload/Details/5
+        public ActionResult Async_Save(IEnumerable<IFormFile> files, short? eid)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (eid != null)
+            {
             IFormFile file = Request.Form.Files[0];
             string folderName = "Upload";
             string webRootPath = _env.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
-            StringBuilder sb = new StringBuilder();
+           
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -74,7 +98,7 @@ namespace CGEvents.Controllers
                 string sFileExtension = Path.GetExtension(file.FileName).ToLower();
                 ISheet sheet;
                 string fullPath = Path.Combine(newPath, file.FileName);
-                bool splitcol=false; //if file has no lname column then trigger the module to split the fname based on space character and create last name column
+                bool splitcol = false; //if file has no lname column then trigger the module to split the fname based on space character and create last name column
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
                     file.CopyTo(stream);
@@ -125,7 +149,7 @@ namespace CGEvents.Controllers
                         {
                             MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "position" });
                         }
-                        else if (cell.ToString().ToLower().Contains("company"))
+                        else if (cell.ToString().ToLower().Contains("company") || cell.ToString().ToLower().Contains("agency"))
                         {
                             MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "company" });
                         }
@@ -139,7 +163,7 @@ namespace CGEvents.Controllers
                         }
                         /* if header column is blank move to next*/
                         if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                       // sb.Append("<th>" + cell.ToString() + "</th>");
+                        // sb.Append("<th>" + cell.ToString() + "</th>");
                     }
 
                     //error message initialisation
@@ -156,57 +180,112 @@ namespace CGEvents.Controllers
                     else if (!MColumnList.Any(i => i.columnName == "lname"))
                     {
                         splitcol = true;
-                       // ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
+                        // ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
                     }
 
-                    ViewData["Import Error"] = ViewData["Import Error"]+ "</ul>";
+                    ViewData["Import Error"] = ViewData["Import Error"] + "</ul>";
 
                     //if manadatory column missing then return with error message
                     if ((string)ViewData["Import Error"] != "<ul></ul>")
                     {
                         return View();
                     }
-                    sb.Append("</tr>");
+                    
+
+                    var errorTD = ""; //this variable will have the html to display error if the row is not valid
 
                     for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
                     {
+
                         IRow row = sheet.GetRow(i);
                         if (row == null) continue;
 
                         if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
 
-                        sb.AppendLine(ValidRow(row, cellCount, MColumnList, splitcol));
+                        errorTD = errorTD + ValidRow(row, cellCount, MColumnList, splitcol);
 
                         //sb.AppendLine("</tr>");
                     }
-                    sb.Append("</table>");
+
+                    if (errorTD == "") // if no error loop thru xl file and  create hashset to write to database
+                    {
+                        HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer());
+                        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
+                        {
+
+                            IRow row = sheet.GetRow(i);
+                            var r = new ColumnsToDB();
+                            if (row == null) continue;
+
+                            if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
+                            
+                            recordSet.Add(GetHashSet(row, cellCount, MColumnList, splitcol));
+                            //****
+                            // check recordset for fname =="Error occured" string and report to user to contact marketing department
+                            //*****
+
+                            ViewData["TransferDetails"] = "<ul><li>(" + recordSet.Count().ToString() + ") Records Inserted </li> <li>(" +  (sheet.LastRowNum-recordSet.Count).ToString() + ") Duplicates found and eliminated</li>";
+                        }
+                        foreach (var a in recordSet)
+                            {
+                            
+                            if (a.Fname.Length<=2 || a.Fname.Contains(".") || a.Fname.Contains("_") || a.Fname.Contains("-"))
+                            {
+                                sb.Append("<tr class='btn-primary' ><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                            }
+                            else { 
+                            sb.Append("<tr><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                            }
+
+                                Ams ams = new Ams
+                                {
+                                    Fname = a.Fname,
+                                    Lname = a.Lname,
+                                    Position = a.Position,
+                                    Company = a.Company,
+                                    EmailId = a.Email,
+                                    EventId = eid,
+                                    EventGroupId = GetNextGroupID(eid)==null ? 1: GetNextGroupID(eid)
+                                };
+//trap the duplicate records before writing to database
+                            _context.Update(ams);
+                            _context.SaveChanges();
+                            
+                        }
+ 
+                    }
+
+                    sb.Append(errorTD + "</tr> </table>");
                 }
             }
-
+            }
             // return this.Content(sb.ToString());
             return Json(Content(sb.ToString()));
         }
-
+        public short? GetNextGroupID(short? eid)
+        {
+            return _context.Ams.Where(w => w.EventId == eid).Select(p => p.EventGroupId).Max();
+        }
         private string ValidRow(IRow row, int cellCount, IList<MandatoryColumns> MColumnList, bool splitcol)
         {
             StringBuilder sb = new StringBuilder();
-            
-            var flag=false ;
-            
+
+            var flag = false;
+
             var record = new ColumnsToDB();
 
             foreach (var a in MColumnList)
-            {   
+            {
                 if (a.columnName == "email")
                 {
-                    
+
                     if (row.GetCell(a.colIndex) != null || row.GetCell(a.colIndex).ToString().Trim() != "")
                     {
                         var test = Validator.EmailIsValid(row.GetCell(a.colIndex).ToString().ToLower().Trim());
 
-                        if (test==false)
+                        if (test == false)
                         {
-                            sb.Append("<tr><td>" + row.RowNum + "</td>><td>" + row.GetCell(a.colIndex).ToString() + "</td><td>Not a Valid Email</td></tr>");
+                            sb.Append("<tr><td>" + row.RowNum + "</td><td>" + row.GetCell(a.colIndex).ToString() + "</td><td>Not a Valid Email</td></tr>");
                             flag = true;
                         }
                     }
@@ -219,39 +298,68 @@ namespace CGEvents.Controllers
                 }
                 else if (a.columnName == "fname")
                 {
-                    if (row.GetCell(a.colIndex) == null || row.GetCell(a.colIndex).ToString().Trim() == "")
+                    //Remove special characters from name
+                    var fname = (row.GetCell(a.colIndex)==null) ? null : regex.Replace(row.GetCell(a.colIndex).ToString(), String.Empty);
+                    if (fname == null || fname.ToString().Trim() == "")
                     {
-                        sb.Append("<tr><td>" + row.RowNum + "</td><td><</td><td>First Name is missing</td></tr>");
+                        sb.Append("<tr><td>" + row.RowNum + "</td><td></td><td>First Name is missing</td></tr>");
                         flag = true;
                     }
                 }
             }
-            if (flag == false)//fname and email is valid
+
+            if (flag == true) { return sb.ToString(); } else { return ""; }
+
+        }
+
+
+        public ColumnsToDB GetHashSet(IRow row, int cellCount, IList<MandatoryColumns> MColumnList, bool splitcol)
+        {
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
+            var record = new ColumnsToDB();
+            try
             {
+
                 foreach (var a in MColumnList)
                 {
-
+                    
                     if (splitcol == true && a.columnName == "fname")
                     {
-                        var name = row.GetCell(a.colIndex).ToString().Trim().Split(" ", 2);
+                        var name = textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim()).Split(" ", 2);
+                        //if any change in expression change in validRow module as well
+                        name[0]= regex.Replace(name[0], String.Empty); //remove any special character
                         record.Fname = name[0];
-                        record.Lname = name[1] ?? null;
+                        record.Lname = (name.Length>0) ? null : textInfo.ToTitleCase(name[1].ToString().ToLower().Trim());
+                    }
+                    else if (splitcol == false && a.columnName == "fname")
+                    {
+                        record.Fname = textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim());
+                        
                     }
                     if (a.columnName == "lname")
                     {
-                        record.Lname = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                        record.Lname = row.GetCell(a.colIndex) == null ? null : textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim());
+                    }
+                    else if (a.columnName == "email")
+                    {
+                        record.Email = row.GetCell(a.colIndex).ToString().ToLower().Trim();
                     }
                     else if (a.columnName == "position")
                     {
-                        record.Position = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                        record.Position = row.GetCell(a.colIndex) == null ? null : textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim());
                     }
                     else if (a.columnName == "company")
                     {
-                        record.Company = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                        record.Company = row.GetCell(a.colIndex) == null ? null : textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim());
                     }
                     else if (a.columnName == "eventgroupid")
                     {
-                        record.EventGroupId = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                       if (short.TryParse(row.GetCell(a.colIndex).ToString(), out short gid))
+                        {
+                            record.EventGroupId = gid;
+                        }
                     }
                     else if (a.columnName == "deadline")
                     {
@@ -261,43 +369,34 @@ namespace CGEvents.Controllers
                         }
 
                     }
-                    //https://stackoverflow.com/questions/18081595/c-sharp-defining-hashset-with-custom-key
-                    //https://dotnetcodr.com/2016/08/30/using-the-hashset-of-t-object-in-c-net-to-store-unique-elements-2/
-                    //to remove duplicates hashset of objects
+                }; //record created
 
-                    HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer() )
-                    {
-                    record
-                    };
-                }
+                //https://stackoverflow.com/questions/18081595/c-sharp-defining-hashset-with-custom-key
+                //https://dotnetcodr.com/2016/08/30/using-the-hashset-of-t-object-in-c-net-to-store-unique-elements-2/
+                //to remove duplicates hashset of objects
+                return record;
             }
-            if (flag == true) { return sb.ToString(); } else { return ""; }
-            
+            catch (Exception ex)
+            {
+                Console.Write(ex.InnerException.Message);
+                record.Fname = "Error occured";
+                record.Email = row.RowNum + "@rownumber";
+                return record;
+                throw;
+            }
+
         }
 
-        public sealed class EmailComparer : IEquatable<EmailComparer>
+        public sealed class EmailComparer : IEqualityComparer<ColumnsToDB>
         {
-            private readonly string yEmail;
-
-            public EmailComparer(string email)
+            public bool Equals(ColumnsToDB x, ColumnsToDB y)
             {
-                yEmail = email;
+                return x.Email.Equals(y.Email, StringComparison.InvariantCultureIgnoreCase);
             }
 
-            public bool Equals(EmailComparer x )
+            public int GetHashCode(ColumnsToDB obj)
             {
-                return x != null && x.yEmail.Equals(yEmail);
-              //  return x.Email.Equals(y.Email, StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            public override bool Equals(object obj)
-            {
-                return obj is ColumnsToDB && Equals((ColumnsToDB)obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return yEmail.GetHashCode();
+                return obj.Email.GetHashCode();
             }
         }
 
