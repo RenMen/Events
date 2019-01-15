@@ -20,7 +20,6 @@ using System.Text.RegularExpressions;
 namespace CGEvents.Controllers
 {
    
-
     public class UploadController : Controller
     {
         private IHostingEnvironment _env;
@@ -30,6 +29,17 @@ namespace CGEvents.Controllers
         {
             public int colIndex;
             public string columnName;
+        }
+        public class ColumnsToDB
+        {
+            public string Fname;
+            public string Lname;
+            public string Email;
+            public string Position;
+            public string Company;
+            public string EventGroupId;
+            public string EventId;
+            public DateTime IndividualDeadline;
         }
         public UploadController(MiscFormsContext context, IHostingEnvironment env)
         {
@@ -50,7 +60,6 @@ namespace CGEvents.Controllers
         public ActionResult Async_Save(IEnumerable<IFormFile> files)
         {
 
-
             IFormFile file = Request.Form.Files[0];
             string folderName = "Upload";
             string webRootPath = _env.WebRootPath;
@@ -65,6 +74,7 @@ namespace CGEvents.Controllers
                 string sFileExtension = Path.GetExtension(file.FileName).ToLower();
                 ISheet sheet;
                 string fullPath = Path.Combine(newPath, file.FileName);
+                bool splitcol=false; //if file has no lname column then trigger the module to split the fname based on space character and create last name column
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
                     file.CopyTo(stream);
@@ -98,7 +108,7 @@ namespace CGEvents.Controllers
                         ICell cell = headerRow.GetCell(j);
 
 
-                        /********  Used to check this column names exist*/
+                        /********  Used to check whether mandatory column names exist*/
                         if (cell.ToString().ToLower().Contains("mail"))
                         {
                             MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "email" });
@@ -119,6 +129,14 @@ namespace CGEvents.Controllers
                         {
                             MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "company" });
                         }
+                        else if (cell.ToString().ToLower().Contains("group"))
+                        {
+                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "eventgroupid" });
+                        }
+                        else if (cell.ToString().ToLower().Contains("deadline"))
+                        {
+                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "deadline" });
+                        }
                         /* if header column is blank move to next*/
                         if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
                        // sb.Append("<th>" + cell.ToString() + "</th>");
@@ -137,7 +155,8 @@ namespace CGEvents.Controllers
                     }
                     else if (!MColumnList.Any(i => i.columnName == "lname"))
                     {
-                        ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
+                        splitcol = true;
+                       // ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
                     }
 
                     ViewData["Import Error"] = ViewData["Import Error"]+ "</ul>";
@@ -156,7 +175,7 @@ namespace CGEvents.Controllers
 
                         if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
 
-                        sb.AppendLine(ValidRow(row, cellCount, MColumnList));
+                        sb.AppendLine(ValidRow(row, cellCount, MColumnList, splitcol));
 
                         //sb.AppendLine("</tr>");
                     }
@@ -168,19 +187,19 @@ namespace CGEvents.Controllers
             return Json(Content(sb.ToString()));
         }
 
-
-        private string ValidRow(IRow row, int cellCount, IList<MandatoryColumns> MColumnList)
+        private string ValidRow(IRow row, int cellCount, IList<MandatoryColumns> MColumnList, bool splitcol)
         {
             StringBuilder sb = new StringBuilder();
             
             var flag=false ;
+            
+            var record = new ColumnsToDB();
+
             foreach (var a in MColumnList)
-            {
-                
+            {   
                 if (a.columnName == "email")
                 {
                     
-
                     if (row.GetCell(a.colIndex) != null || row.GetCell(a.colIndex).ToString().Trim() != "")
                     {
                         var test = Validator.EmailIsValid(row.GetCell(a.colIndex).ToString().ToLower().Trim());
@@ -195,7 +214,6 @@ namespace CGEvents.Controllers
                     {
                         sb.Append("<tr><td>" + row.RowNum + "</td><td></td><td>Provide an email address</td></tr>");
                         flag = true;
-
                     }
 
                 }
@@ -208,11 +226,80 @@ namespace CGEvents.Controllers
                     }
                 }
             }
+            if (flag == false)//fname and email is valid
+            {
+                foreach (var a in MColumnList)
+                {
+
+                    if (splitcol == true && a.columnName == "fname")
+                    {
+                        var name = row.GetCell(a.colIndex).ToString().Trim().Split(" ", 2);
+                        record.Fname = name[0];
+                        record.Lname = name[1] ?? null;
+                    }
+                    if (a.columnName == "lname")
+                    {
+                        record.Lname = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                    }
+                    else if (a.columnName == "position")
+                    {
+                        record.Position = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                    }
+                    else if (a.columnName == "company")
+                    {
+                        record.Company = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                    }
+                    else if (a.columnName == "eventgroupid")
+                    {
+                        record.EventGroupId = row.GetCell(a.colIndex).ToString().Trim() ?? null;
+                    }
+                    else if (a.columnName == "deadline")
+                    {
+                        if (DateTime.TryParse(row.GetCell(a.colIndex).ToString().Trim(), out DateTime dateValue))
+                        {
+                            record.IndividualDeadline = dateValue;
+                        }
+
+                    }
+                    //https://stackoverflow.com/questions/18081595/c-sharp-defining-hashset-with-custom-key
+                    //https://dotnetcodr.com/2016/08/30/using-the-hashset-of-t-object-in-c-net-to-store-unique-elements-2/
+                    //to remove duplicates hashset of objects
+
+                    HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer() )
+                    {
+                    record
+                    };
+                }
+            }
             if (flag == true) { return sb.ToString(); } else { return ""; }
-          
+            
         }
 
+        public sealed class EmailComparer : IEquatable<EmailComparer>
+        {
+            private readonly string yEmail;
 
+            public EmailComparer(string email)
+            {
+                yEmail = email;
+            }
+
+            public bool Equals(EmailComparer x )
+            {
+                return x != null && x.yEmail.Equals(yEmail);
+              //  return x.Email.Equals(y.Email, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is ColumnsToDB && Equals((ColumnsToDB)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return yEmail.GetHashCode();
+            }
+        }
 
         public ActionResult Async_Remove(string[] fileNames)
         {

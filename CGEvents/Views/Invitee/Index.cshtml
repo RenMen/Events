@@ -89,27 +89,27 @@
 
                                 </div>
                             </div*@
-                            @(Html.Kendo().Upload()
-                                        .Name("files")
-                                        .Async(a => a
-                                            .Save("Async_Save", "Upload")
-                                            .Remove("Async_Remove", "Upload")
-                                            .AutoUpload(true)
-                                        )
+        @(Html.Kendo().Upload()
+                    .Name("files")
+                    .Async(a => a
+                        .Save("Async_Save", "Upload")
+                        .Remove("Async_Remove", "Upload")
+                        .AutoUpload(true)
+                    )
                                         
-                                            .Events(events => events
-                                        .Success("onSuccess")
-                                        .Select("onSelect")
+                        .Events(events => events
+                    .Success("onSuccess")
+                    .Select("onSelect")
                             
 
-                        )
-                            )
+    )
+        )
 
 
-                            <div class="box">
-                                <h4>Console log</h4>
-                                <div class="console" id="UploadStatusConsole"></div>
-                            </div>
+    <div class="box">
+        <h4>Console log</h4>
+        <div class="console" id="UploadStatusConsole">@ViewData["Import Error"]</div>
+    </div>
 
             </text>)
                         .Draggable()
@@ -215,6 +215,7 @@
     };
 
     function onSuccess(e) {
+        console.write(e.response.Content);
         $('#UploadStatusConsole').html(e.response.Content);
         $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
     };
