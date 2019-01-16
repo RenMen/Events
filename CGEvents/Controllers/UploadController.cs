@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CGEvents.Models;
+﻿using CGEvents.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Text;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.Mvc;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CGEvents.Controllers
 {
@@ -51,13 +47,23 @@ namespace CGEvents.Controllers
 
 
         // GET: Upload
-        public async Task<IActionResult> Index()
+        public IActionResult Index(short? eid)
         {
             //var miscFormsContext = _context.Ams.Include(a => a.EventIdNavigation);
             //return View(await miscFormsContext.ToListAsync());
+            if (eid != null)
+            {
+                ViewData["EventId"] = eid;
+                ViewData["EventName"] = GetEventName(eid);
+            }
+
             return View();
         }
 
+        public string GetEventName(short? eid)
+        {
+            return _context.EventMaster.FirstOrDefault(id => id.EventId == eid).EventName;
+        }
         public class EventDropDownModel
         {
             public string EventName { get; set; }
@@ -84,158 +90,152 @@ namespace CGEvents.Controllers
             StringBuilder sb = new StringBuilder();
             if (eid != null)
             {
-            IFormFile file = Request.Form.Files[0];
-            string folderName = "Upload";
-            string webRootPath = _env.WebRootPath;
-            string newPath = Path.Combine(webRootPath, folderName);
-           
-            if (!Directory.Exists(newPath))
-            {
-                Directory.CreateDirectory(newPath);
-            }
-            if (file.Length > 0)
-            {
-                string sFileExtension = Path.GetExtension(file.FileName).ToLower();
-                ISheet sheet;
-                string fullPath = Path.Combine(newPath, file.FileName);
-                bool splitcol = false; //if file has no lname column then trigger the module to split the fname based on space character and create last name column
-                using (var stream = new FileStream(fullPath, FileMode.Create))
+                IFormFile file = Request.Form.Files[0];
+                string folderName = "Upload";
+                string webRootPath = _env.WebRootPath;
+                string newPath = Path.Combine(webRootPath, folderName);
+
+                if (!Directory.Exists(newPath))
                 {
-                    file.CopyTo(stream);
-                    stream.Position = 0;
-                    if (sFileExtension == ".xls")
+                    Directory.CreateDirectory(newPath);
+                }
+                if (file.Length > 0)
+                {
+                    string sFileExtension = Path.GetExtension(file.FileName).ToLower();
+                    ISheet sheet;
+                    string fullPath = Path.Combine(newPath, file.FileName);
+                    bool splitcol = false; //if file has no lname column then trigger the module to split the fname based on space character and create last name column
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
-                    }
-                    else
-                    {
-                        XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
-                    }
-                    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    int cellCount = headerRow.LastCellNum;
-                    sb.Append("<table class='table'><tr>");
-                    sb.Append("<th>Row#</th><th>Error Message</th>");
-
-                    //****mandatory columns
-                    //var emailCol = 0;
-                    //var fname = 0;
-                    //var lname = 0;
-                    //var position = 0;
-                    //var company = 0;
-                    IList<MandatoryColumns> MColumnList = new List<MandatoryColumns>();
-
-                    for (int j = 0; j < cellCount; j++)
-                    {
-
-                        ICell cell = headerRow.GetCell(j);
-
-
-                        /********  Used to check whether mandatory column names exist*/
-                        if (cell.ToString().ToLower().Contains("mail"))
+                        file.CopyTo(stream);
+                        stream.Position = 0;
+                        if (sFileExtension == ".xls")
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "email" });
+                            HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
+                            sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
                         }
-                        else if (cell.ToString().ToLower().Contains("fname") || cell.ToString().ToLower().Contains("first"))
+                        else
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "fname" });
+                            XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
+                            sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
                         }
-                        else if (cell.ToString().ToLower().Contains("lname") || cell.ToString().ToLower().Contains("last"))
+                        IRow headerRow = sheet.GetRow(0); //Get Header Row
+                        int cellCount = headerRow.LastCellNum;
+
+                        IList<MandatoryColumns> MColumnList = new List<MandatoryColumns>();
+
+                        for (int j = 0; j < cellCount; j++)
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "lname" });
+
+                            ICell cell = headerRow.GetCell(j);
+
+
+                            /********  Used to check whether mandatory column names exist*/
+                            if (cell.ToString().ToLower().Contains("mail"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "email" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("fname") || cell.ToString().ToLower().Contains("first"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "fname" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("lname") || cell.ToString().ToLower().Contains("last"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "lname" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("position"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "position" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("company") || cell.ToString().ToLower().Contains("agency"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "company" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("group"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "eventgroupid" });
+                            }
+                            else if (cell.ToString().ToLower().Contains("deadline"))
+                            {
+                                MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "deadline" });
+                            }
+                            /* if header column is blank move to next*/
+                            if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
+                            // sb.Append("<th>" + cell.ToString() + "</th>");
                         }
-                        else if (cell.ToString().ToLower().Contains("position"))
+
+                        //error message initialisation
+                        ViewData["Import Error"] = "<ul>";
+
+                        if (!MColumnList.Any(i => i.columnName == "email"))
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "position" });
+                            ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Email Address Column</li>";
                         }
-                        else if (cell.ToString().ToLower().Contains("company") || cell.ToString().ToLower().Contains("agency"))
+                        else if (!MColumnList.Any(i => i.columnName == "fname"))
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "company" });
+                            ViewData["Import Error"] = ViewData["Import Error"] + "<li>No First Name Column</li>";
                         }
-                        else if (cell.ToString().ToLower().Contains("group"))
+                        else if (!MColumnList.Any(i => i.columnName == "lname"))
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "eventgroupid" });
+                            splitcol = true;
+                            // ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
                         }
-                        else if (cell.ToString().ToLower().Contains("deadline"))
+
+                        ViewData["Import Error"] = ViewData["Import Error"] + "</ul>";
+
+                        //if manadatory column missing then return with error message
+                        if ((string)ViewData["Import Error"] != "<ul></ul>")
                         {
-                            MColumnList.Add(new MandatoryColumns() { colIndex = j, columnName = "deadline" });
+                            return View();
                         }
-                        /* if header column is blank move to next*/
-                        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                        // sb.Append("<th>" + cell.ToString() + "</th>");
-                    }
 
-                    //error message initialisation
-                    ViewData["Import Error"] = "<ul>";
 
-                    if (!MColumnList.Any(i => i.columnName == "email"))
-                    {
-                        ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Email Address Column</li>";
-                    }
-                    else if (!MColumnList.Any(i => i.columnName == "fname"))
-                    {
-                        ViewData["Import Error"] = ViewData["Import Error"] + "<li>No First Name Column</li>";
-                    }
-                    else if (!MColumnList.Any(i => i.columnName == "lname"))
-                    {
-                        splitcol = true;
-                        // ViewData["Import Error"] = ViewData["Import Error"] + "<li>No Last Name Column</li>";
-                    }
+                        var errorTD = ""; //this variable will have the html to display error if the row is not valid
 
-                    ViewData["Import Error"] = ViewData["Import Error"] + "</ul>";
-
-                    //if manadatory column missing then return with error message
-                    if ((string)ViewData["Import Error"] != "<ul></ul>")
-                    {
-                        return View();
-                    }
-                    
-
-                    var errorTD = ""; //this variable will have the html to display error if the row is not valid
-
-                    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    {
-
-                        IRow row = sheet.GetRow(i);
-                        if (row == null) continue;
-
-                        if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-
-                        errorTD = errorTD + ValidRow(row, cellCount, MColumnList, splitcol);
-
-                        //sb.AppendLine("</tr>");
-                    }
-
-                    if (errorTD == "") // if no error loop thru xl file and  create hashset to write to database
-                    {
-                        HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer());
                         for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
                         {
 
                             IRow row = sheet.GetRow(i);
-                            var r = new ColumnsToDB();
                             if (row == null) continue;
 
                             if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-                            
-                            recordSet.Add(GetHashSet(row, cellCount, MColumnList, splitcol));
-                            //****
-                            // check recordset for fname =="Error occured" string and report to user to contact marketing department
-                            //*****
 
-                            ViewData["TransferDetails"] = "<ul><li>(" + recordSet.Count().ToString() + ") Records Inserted </li> <li>(" +  (sheet.LastRowNum-recordSet.Count).ToString() + ") Duplicates found and eliminated</li>";
+                            errorTD = errorTD + ValidRow(row, cellCount, MColumnList, splitcol);
+
+                            //sb.AppendLine("</tr>");
                         }
-                        foreach (var a in recordSet)
+
+                        if (errorTD == "") // if no error loop thru xl file and  create hashset to write to database
+                        {
+                            HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer());
+                            StringBuilder tranferTD = new StringBuilder();
+                            for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
                             {
+
+                                IRow row = sheet.GetRow(i);
+                                var r = new ColumnsToDB();
+                                if (row == null) continue;
+
+                                if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
+
+                                recordSet.Add(GetHashSet(row, cellCount, MColumnList, splitcol));
+                                //****
+                                // check recordSet for fname =="Error occured" string and report to user to contact marketing department
+                                //*****
+  
+                            }
                             
-                            if (a.Fname.Length<=2 || a.Fname.Contains(".") || a.Fname.Contains("_") || a.Fname.Contains("-"))
+                            foreach (var a in recordSet)
                             {
-                                sb.Append("<tr class='btn-primary' ><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
-                            }
-                            else { 
-                            sb.Append("<tr><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
-                            }
+
+                                if (a.Fname.Length <= 2 || a.Fname.Contains(".") || a.Fname.Contains("_") || a.Fname.Contains("-"))
+                                {
+                                    tranferTD.Append("<tr class='btn-primary' ><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                                }
+                                else
+                                {
+                                    tranferTD.Append("<tr><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                                }
 
                                 Ams ams = new Ams
                                 {
@@ -245,22 +245,49 @@ namespace CGEvents.Controllers
                                     Company = a.Company,
                                     EmailId = a.Email,
                                     EventId = eid,
-                                    EventGroupId = GetNextGroupID(eid)==null ? 1: GetNextGroupID(eid)
+                                    EventGroupId = GetNextGroupID(eid) == null ? 1 : GetNextGroupID(eid)
                                 };
-//trap the duplicate records before writing to database
-                            _context.Update(ams);
-                            _context.SaveChanges();
-                            
-                        }
- 
-                    }
+                                //trap the duplicate records before writing to database
+                                //follow the below link to bulk insert - to improve insertion time
+                                //https://janaks.com.np/bulk-insert-in-entityframework-core/ 
 
-                    sb.Append(errorTD + "</tr> </table>");
+                                _context.Add(ams);
+       
+                            }
+                            _context.SaveChanges();
+                            sb.Append("<div class='alert alert-success' role='success'> <h4 class='alert-heading'> Successfully Updated.!</h4></div>" +
+                            "<ul><li>(" + recordSet.Count().ToString() + ") Records Inserted </li> <li>(" + (sheet.LastRowNum - recordSet.Count).ToString() + ") Duplicates found and eliminated</li>");
+                            sb.Append("<table id='resultGrid' class='table table-striped table-bordered'><tr>");
+                            sb.Append("<th>First Name</th><th>Last Name</th><th>Email</th>");
+                            sb.Append(tranferTD + "</tr> </table>");
+                            return Json(Content(sb.ToString()));
+                        }
+                        else
+                        {
+                            sb.Append("<div class='alert alert-danger' role='alert'> <h4 class='alert-heading'> File not updated.!</h4><p> Please fix the below errors in" + file.FileName + "and try upload again</p></div>");
+                            sb.Append("<table id='resultGrid' class='table table-striped table-bordered'>");
+                            sb.Append("<th>Row#</th><th>First Name/ Email</th><th>Error Message</th>");
+                            sb.Append(errorTD + "</tr> </table>");
+                            //Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+                            return Json(Content(sb.ToString()));
+                        }
+                    }
+                }
+                else
+                {
+                    sb.Append("<div class='alert alert-danger' role='alert'> <h4 class='alert-heading'>No files selected !</h4></div>");
+                    return Json(Content(sb.ToString()));
                 }
             }
+            else
+            {
+                //Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+                sb.Append("<div class='alert alert-danger' role='alert'> <h4 class='alert-heading'>No Event Selected !</h4><p> Please select an event from the drop down list</p></div>");
+                return Json(Content(sb.ToString()));
             }
+
             // return this.Content(sb.ToString());
-            return Json(Content(sb.ToString()));
+
         }
         public short? GetNextGroupID(short? eid)
         {
@@ -299,7 +326,7 @@ namespace CGEvents.Controllers
                 else if (a.columnName == "fname")
                 {
                     //Remove special characters from name
-                    var fname = (row.GetCell(a.colIndex)==null) ? null : regex.Replace(row.GetCell(a.colIndex).ToString(), String.Empty);
+                    var fname = (row.GetCell(a.colIndex) == null) ? null : regex.Replace(row.GetCell(a.colIndex).ToString(), String.Empty);
                     if (fname == null || fname.ToString().Trim() == "")
                     {
                         sb.Append("<tr><td>" + row.RowNum + "</td><td></td><td>First Name is missing</td></tr>");
@@ -324,19 +351,19 @@ namespace CGEvents.Controllers
 
                 foreach (var a in MColumnList)
                 {
-                    
+
                     if (splitcol == true && a.columnName == "fname")
                     {
                         var name = textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim()).Split(" ", 2);
                         //if any change in expression change in validRow module as well
-                        name[0]= regex.Replace(name[0], String.Empty); //remove any special character
+                        name[0] = regex.Replace(name[0], String.Empty); //remove any special character
                         record.Fname = name[0];
-                        record.Lname = (name.Length>0) ? null : textInfo.ToTitleCase(name[1].ToString().ToLower().Trim());
+                        record.Lname = (name.Length > 0) ? null : textInfo.ToTitleCase(name[1].ToString().ToLower().Trim());
                     }
                     else if (splitcol == false && a.columnName == "fname")
                     {
                         record.Fname = textInfo.ToTitleCase(row.GetCell(a.colIndex).ToString().ToLower().Trim());
-                        
+
                     }
                     if (a.columnName == "lname")
                     {
@@ -356,7 +383,7 @@ namespace CGEvents.Controllers
                     }
                     else if (a.columnName == "eventgroupid")
                     {
-                       if (short.TryParse(row.GetCell(a.colIndex).ToString(), out short gid))
+                        if (short.TryParse(row.GetCell(a.colIndex).ToString(), out short gid))
                         {
                             record.EventGroupId = gid;
                         }
