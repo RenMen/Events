@@ -32,16 +32,16 @@
                     <label asp-for="EventDate" class="control-label d-block">Start Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDate")
-                                                      .Max(DateTime.Now.AddMonths(1))
-                                                      .Value("")
-                                                      .Events(y =>
-                                                      {
-                                                          y.Change("startChange");
-                                                          y.Open("startOpen");
+                                .Max(DateTime.Now.AddMonths(1))
+                                .Value("")
+                                .Events(y =>
+                                {
+                                    y.Change("startChange");
+                                    y.Open("startOpen");
 
-                                                      })
-                                                      .HtmlAttributes(new { style = "width: 100%" })
-                                                      .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                     )
 
@@ -54,15 +54,15 @@
                     <label asp-for="EventDateTo" class="control-label d-block ">End Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDateTo")
-                                                       .Value("")
-                                                        .Min(DateTime.Now.AddMonths(-1))
-                                                        .Events(y =>
-                                                        {
-                                                            y.Change("endChange");
-                                                            y.Open("endOpen");
-                                                        })
-                                                        .HtmlAttributes(new { style = "width: 100%" })
-                                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                .Value("")
+                                .Min(DateTime.Now.AddMonths(-1))
+                                .Events(y =>
+                                {
+                                    y.Change("endChange");
+                                    y.Open("endOpen");
+                                })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
                     )
 
 
@@ -77,16 +77,16 @@
                         <label asp-for="FormDeadline" class="control-label d-block"></label>
 
                         @(Html.Kendo().DateTimePicker()
-                                                                 .Name("FormDeadline")
-                                                                 .Value("")
-                                                                 .Min(DateTime.Now.AddMonths(-1))
-                                                                 .Events(y =>
-                                                                 {
-                                                                     y.Change("dlChange");
-                                                                     y.Open("dlOpen");
-                                                                 })
-                                                                     .HtmlAttributes(new { style = "width: 100%" })
-                                                                     .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                .Name("FormDeadline")
+                                .Value("")
+                                .Min(DateTime.Now.AddMonths(-1))
+                                .Events(y =>
+                                {
+                                y.Change("dlChange");
+                                y.Open("dlOpen");
+                                })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                         )
                         <span asp-validation-for="FormDeadline" class="text-danger"></span>
@@ -107,46 +107,46 @@
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
             <label asp-for="MailHeader" class="control-label">Upload and Insert Creative</label>
             @(Html.Kendo().Editor()
-                                        .Encoded(false)
-                                                               .Name("MailHeader")
-                                                               .HtmlAttributes(new { style = "height:350px" })
-                                                              .Tools(tools => tools
-                                                              .Clear()
-                                                              .CreateLink().Unlink()
-                                                              .InsertImage()
-                                                              .InsertFile()
-                                                              .TableEditing()
-                                                              .ViewHtml()
-                                                              .Print()
-                                                              .FontName(fonts => fonts
-                                                                .Add("Arial", "Arial")
-                                                                .Add("Calibry", "Calibry")
-                                                                .Add("Courier New", "Courier New")
-                                                                .Add("Lucida Console", "Lucida Console")
-                                                                .Add("Georgia", "Georgia")
-                                                                .Add("Impact", "Impact")
-                                                                .Add("Tohoma", "Tohoma")
-                                                                .Add("Times New Roman", "Times New Roman")
-                                                                .Add("Trebuchet", "Trebuchet")
-                                                                .Add("Verdana", "Verdana")
-                                                            )
-                                                              )
-                                                                .ImageBrowser(imageBrowser => imageBrowser
-                                                                    .Image("~/shared/UserFiles/Images/{0}")
-                                                                    .Read("Read", "ImageBrowser")
-                                                                    .Create("Create", "ImageBrowser")
-                                                                    .Destroy("Destroy", "ImageBrowser")
-                                                                    .Upload("Upload", "ImageBrowser")
-                                                                )
-                                                                .FileBrowser(fileBrowser => fileBrowser
-                                                                    .File("~/shared/UserFiles/Images/{0}")
-                                                                    .Read("Read", "FileBrowser")
-                                                                    .Create("Create", "FileBrowser")
-                                                                    .Destroy("Destroy", "FileBrowser")
-                                                                    .Upload("Upload", "FileBrowser")
-                                                                )
+            .Encoded(false)
+            .Name("MailHeader")
+            .HtmlAttributes(new { style = "height:350px" })
+            .Tools(tools => tools
+            .Clear()
+            .CreateLink().Unlink()
+            .InsertImage()
+            .InsertFile()
+            .TableEditing()
+            .ViewHtml()
+            .Print()
+            .FontName(fonts => fonts
+            .Add("Arial", "Arial")
+            .Add("Calibry", "Calibry")
+            .Add("Courier New", "Courier New")
+            .Add("Lucida Console", "Lucida Console")
+            .Add("Georgia", "Georgia")
+            .Add("Impact", "Impact")
+            .Add("Tohoma", "Tohoma")
+            .Add("Times New Roman", "Times New Roman")
+            .Add("Trebuchet", "Trebuchet")
+            .Add("Verdana", "Verdana")
+        )
+            )
+            .ImageBrowser(imageBrowser => imageBrowser
+                .Image("~/shared/UserFiles/Images/{0}")
+                .Read("Read", "ImageBrowser")
+                .Create("Create", "ImageBrowser")
+                .Destroy("Destroy", "ImageBrowser")
+                .Upload("Upload", "ImageBrowser")
+            )
+            .FileBrowser(fileBrowser => fileBrowser
+                .File("~/shared/UserFiles/Images/{0}")
+                .Read("Read", "FileBrowser")
+                .Create("Create", "FileBrowser")
+                .Destroy("Destroy", "FileBrowser")
+                .Upload("Upload", "FileBrowser")
+            )
 
-                                                                 .Value(@<text>
+                .Value(@<text>
             <partial name="_emailtemplate" />
                                                                 </text>)
             )
@@ -159,94 +159,94 @@
             <label asp-for="MailBody" class="control-label">Covering letter (If any)</label>
             @(Html.Kendo().Editor()
                                          .Encoded(false)
-                                                               .Name("MailBody")
-                                                               .HtmlAttributes(new { style = "height:200px" })
-                                                              .Tools(tools => tools
-                                                              .Clear()
-                                                              .Bold().Italic().Underline().Strikethrough()
-                                                              .JustifyLeft().JustifyCenter().JustifyRight().JustifyFull()
-                                                              .InsertUnorderedList().InsertOrderedList()
-                                                              .Outdent().Indent()
-                                                              .CreateLink().Unlink()
-                                                              .InsertImage()
-                                                              .InsertFile()
-                                                              .SubScript()
-                                                              .SuperScript()
-                                                              .TableEditing()
-                                                              .ViewHtml()
-                                                              .Formatting()
-                                                              .CleanFormatting()
-                                                              .FontName()
-                                                              .FontSize()
-                                                              .ForeColor().BackColor()
-                                                              .Print()
-                                                              .FontName(fonts => fonts
-                                                                .Add("Arial", "Arial")
-                                                                .Add("Calibry", "Calibry")
-                                                                .Add("Courier New", "Courier New")
-                                                                .Add("Lucida Console", "Lucida Console")
-                                                                .Add("Georgia", "Georgia")
-                                                                .Add("Impact", "Impact")
-                                                                .Add("Tohoma", "Tohoma")
-                                                                .Add("Times New Roman", "Times New Roman")
-                                                                .Add("Trebuchet", "Trebuchet")
-                                                                .Add("Verdana", "Verdana")
-                                                            )
-                                                              )
+                    .Name("MailBody")
+                    .HtmlAttributes(new { style = "height:200px" })
+                    .Tools(tools => tools
+                    .Clear()
+                    .Bold().Italic().Underline().Strikethrough()
+                    .JustifyLeft().JustifyCenter().JustifyRight().JustifyFull()
+                    .InsertUnorderedList().InsertOrderedList()
+                    .Outdent().Indent()
+                    .CreateLink().Unlink()
+                    .InsertImage()
+                    .InsertFile()
+                    .SubScript()
+                    .SuperScript()
+                    .TableEditing()
+                    .ViewHtml()
+                    .Formatting()
+                    .CleanFormatting()
+                    .FontName()
+                    .FontSize()
+                    .ForeColor().BackColor()
+                    .Print()
+                    .FontName(fonts => fonts
+                    .Add("Arial", "Arial")
+                    .Add("Calibry", "Calibry")
+                    .Add("Courier New", "Courier New")
+                    .Add("Lucida Console", "Lucida Console")
+                    .Add("Georgia", "Georgia")
+                    .Add("Impact", "Impact")
+                    .Add("Tohoma", "Tohoma")
+                    .Add("Times New Roman", "Times New Roman")
+                    .Add("Trebuchet", "Trebuchet")
+                    .Add("Verdana", "Verdana")
+                )
+                    )
 
-                                                                 .Value(@<text>
+                .Value(@<text>
 
-                                                                </text>)
+                </text>)
             )
             <span asp-validation-for="MailBody" class="text-danger"></span>
         </div>
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
             <label asp-for="MailSignature" class="control-label">Signature</label>
             @(Html.Kendo().Editor()
-                                         .Encoded(false)
-                                                             .Name("MailSignature")
-                                                             .HtmlAttributes(new { style = "height:200px" })
-                                                             .Tools(tools => tools
-                                                             .Clear()
-                                                             .Bold().Italic().Underline().Strikethrough()
-                                                             .CreateLink().Unlink()
-                                                             .ViewHtml()
-                                                             .Formatting()
-                                                             .CleanFormatting()
-                                                             .FontName()
-                                                             .FontSize()
-                                                             .ForeColor().BackColor()
-                                                             .FontName(fonts => fonts
-                                                                .Add("Arial", "Arial")
-                                                                .Add("Calibry", "Calibry")
-                                                                .Add("Courier New", "Courier New")
-                                                                .Add("Lucida Console", "Lucida Console")
-                                                                .Add("Georgia", "Georgia")
-                                                                .Add("Impact", "Impact")
-                                                                .Add("Tohoma", "Tohoma")
-                                                                .Add("Times New Roman", "Times New Roman")
-                                                                .Add("Trebuchet", "Trebuchet")
-                                                                .Add("Verdana", "Verdana")
-                                                            )
-                                                             .Snippets(snippets => snippets
-                                                               .Add("Walid Yared", "<p>Regards,<b><br /> <br />Walid Yared ," +
-                                                               "<br /> Chief Marketing Officer  </b>" +
-                                                               "<br /> Choueiri Group Building  " +
-                                                               "<br /> Media City, Knowledge Village " +
-                                                               "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
-                                                               "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
-                                                               "<br /> E - mail: <a href='mailto:wyared.mr@choueirigroup.com'> wyared.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")
-                                                               .Add("Paula", "<p>Regards,<b><br /><br /> Paula Beainy ," +
-                                                               "<br /> PA & Events Manager  </b>" +
-                                                               "<br /> Choueiri Group Building  " +
-                                                               "<br /> Media City, Knowledge Village " +
-                                                               "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
-                                                               "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
-                                                               "<br/> Mob: +971 52 6932733" +
-                                                               "<br /> E - mail: <a href='mailto:pbeainy.mr@choueirigroup.com'> pbeainy.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")))
-                                                               .Value(@<text>
+                        .Encoded(false)
+                        .Name("MailSignature")
+                        .HtmlAttributes(new { style = "height:200px" })
+                        .Tools(tools => tools
+                        .Clear()
+                        .Bold().Italic().Underline().Strikethrough()
+                        .CreateLink().Unlink()
+                        .ViewHtml()
+                        .Formatting()
+                        .CleanFormatting()
+                        .FontName()
+                        .FontSize()
+                        .ForeColor().BackColor()
+                        .FontName(fonts => fonts
+                        .Add("Arial", "Arial")
+                        .Add("Calibry", "Calibry")
+                        .Add("Courier New", "Courier New")
+                        .Add("Lucida Console", "Lucida Console")
+                        .Add("Georgia", "Georgia")
+                        .Add("Impact", "Impact")
+                        .Add("Tohoma", "Tohoma")
+                        .Add("Times New Roman", "Times New Roman")
+                        .Add("Trebuchet", "Trebuchet")
+                        .Add("Verdana", "Verdana")
+                    )
+                        .Snippets(snippets => snippets
+                        .Add("Walid Yared", "<p>Regards,<b><br /> <br />Walid Yared ," +
+                        "<br /> Chief Marketing Officer  </b>" +
+                        "<br /> Choueiri Group Building  " +
+                        "<br /> Media City, Knowledge Village " +
+                        "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
+                        "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
+                        "<br /> E - mail: <a href='mailto:wyared.mr@choueirigroup.com'> wyared.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")
+                        .Add("Paula", "<p>Regards,<b><br /><br /> Paula Beainy ," +
+                        "<br /> PA & Events Manager  </b>" +
+                        "<br /> Choueiri Group Building  " +
+                        "<br /> Media City, Knowledge Village " +
+                        "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
+                        "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
+                        "<br/> Mob: +971 52 6932733" +
+                        "<br /> E - mail: <a href='mailto:pbeainy.mr@choueirigroup.com'> pbeainy.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")))
+                        .Value(@<text>
 
-                                                            </text>)
+                    </text>)
             )
             <span asp-validation-for="MailSignature" class="text-danger"></span>
         </div>

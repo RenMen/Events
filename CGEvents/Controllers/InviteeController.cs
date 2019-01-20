@@ -152,7 +152,6 @@ namespace CGEvents.Controllers
 
         public string GetEventName(short? eid)
         {
-
             return _context.Ams.Include(s=>s.EventIdNavigation).Where(w => w.EventId == eid).FirstOrDefault().EventIdNavigation.EventName;
         }
 
@@ -205,7 +204,7 @@ namespace CGEvents.Controllers
                             Position = Invitee.Position,
                             IndvDeadline = Invitee.IndvDeadline,
                             Company = Invitee.Position,
-                            EventGroupId = GetNextGroupID(Invitee.EventId)
+                            EventGroupId = GetNextGroupID(Invitee.EventId) == null ? 1 : (short?)(GetNextGroupID(Invitee.EventId) + 1)
 
                         };
                         // Add the entity.

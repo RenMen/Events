@@ -1,4 +1,5 @@
 ﻿using CGEvents.Models;
+using EFCore.BulkExtensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,7 @@ namespace CGEvents.Controllers
             public short EventId;
             public DateTime IndividualDeadline;
         }
+
         public UploadController(MiscFormsContext context, IHostingEnvironment env)
         {
             _context = context;
@@ -87,14 +89,17 @@ namespace CGEvents.Controllers
         // GET: Upload/Details/5
         public ActionResult Async_Save(IEnumerable<IFormFile> files, short? eid)
         {
+
             StringBuilder sb = new StringBuilder();
+
             if (eid != null)
             {
+
                 IFormFile file = Request.Form.Files[0];
                 string folderName = "Upload";
                 string webRootPath = _env.WebRootPath;
                 string newPath = Path.Combine(webRootPath, folderName);
-
+                short eGrpId = GetNextGroupID(eid) == null ? (short)1 : (short)(GetNextGroupID(eid) + 1);
                 if (!Directory.Exists(newPath))
                 {
                     Directory.CreateDirectory(newPath);
@@ -207,59 +212,58 @@ namespace CGEvents.Controllers
 
                         if (errorTD == "") // if no error loop thru xl file and  create hashset to write to database
                         {
-                            HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer());
+                            // HashSet<ColumnsToDB> recordSet = new HashSet<ColumnsToDB>(new EmailComparer());
+                                                       
+                            HashSet<Ams> recordSet = new HashSet<Ams>(new EmailComparer1());
+                            IList<Ams> recordSetL = new List<Ams>();
                             StringBuilder tranferTD = new StringBuilder();
+                            var checks = _context.Ams.Where(i => i.EventId == eid).Select(r => r.EmailId).ToArray();
+                            var emailExistInDb = 0;
+
                             for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
                             {
 
                                 IRow row = sheet.GetRow(i);
                                 var r = new ColumnsToDB();
                                 if (row == null) continue;
-
                                 if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
+                                r= GetHashSet(row, cellCount, MColumnList, splitcol);
 
-                                recordSet.Add(GetHashSet(row, cellCount, MColumnList, splitcol));
-                                //****
-                                // check recordSet for fname =="Error occured" string and report to user to contact marketing department
-                                //*****
-  
-                            }
-                            
-                            foreach (var a in recordSet)
-                            {
-
-                                if (a.Fname.Length <= 2 || a.Fname.Contains(".") || a.Fname.Contains("_") || a.Fname.Contains("-"))
+                                if (!checks.Contains(r.Email))
                                 {
-                                    tranferTD.Append("<tr class='btn-primary' ><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                                  recordSet.Add(new Ams { Fname = r.Fname, Lname = r.Lname, EmailId = r.Email, Position = r.Position, Company = r.Company ,EventId=eid,EventGroupId=eGrpId});
+                                    if (r.Fname.Length <= 2 || r.Fname.Contains(".") || r.Fname.Contains("_") || r.Fname.Contains("-"))
+                                    {
+                                        tranferTD.Append("<tr><td  class='btn-primary'>" + r.Fname + "</td><td  class='btn-primary'>" + r.Lname + "</td><td  class='btn-primary'>" + r.Email + "</td></tr>");
+                                    }
+                                    else
+                                    {
+                                        tranferTD.Append("<tr><td>" + r.Fname + "</td><td>" + r.Lname + "</td><td>" + r.Email + "</td></tr>");
+                                    }
                                 }
                                 else
                                 {
-                                    tranferTD.Append("<tr><td>" + a.Fname + "</td><td>" + a.Lname + "</td><td>" + a.Email + "</td></tr>");
+                                    emailExistInDb = emailExistInDb + 1;
                                 }
 
-                                Ams ams = new Ams
-                                {
-                                    Fname = a.Fname,
-                                    Lname = a.Lname,
-                                    Position = a.Position,
-                                    Company = a.Company,
-                                    EmailId = a.Email,
-                                    EventId = eid,
-                                    EventGroupId = GetNextGroupID(eid) == null ? 1 : GetNextGroupID(eid)
-                                };
-                                //trap the duplicate records before writing to database
-                                //follow the below link to bulk insert - to improve insertion time
-                                //https://janaks.com.np/bulk-insert-in-entityframework-core/ 
 
-                                _context.Add(ams);
-       
+                                //****
+                                // check recordSet for fname =="Error occured" string and report to user to contact marketing department
+                                //*****
+
                             }
-                            _context.SaveChanges();
-                            sb.Append("<div class='alert alert-success' role='success'> <h4 class='alert-heading'> Successfully Updated.!</h4></div>" +
-                            "<ul><li>(" + recordSet.Count().ToString() + ") Records Inserted </li> <li>(" + (sheet.LastRowNum - recordSet.Count).ToString() + ") Duplicates found and eliminated</li>");
-                            sb.Append("<table id='resultGrid' class='table table-striped table-bordered'><tr>");
+                            //Bulkinsert require a list. to remove duplicates we use hashset. so converted hashset to list
+                             recordSetL= recordSet.ToList();
+                            //follow the below link to bulk insert - to improve insertion time
+                            //https://janaks.com.np/bulk-insert-in-entityframework-core/ 
+                            //https://github.com/borisdj/EFCore.BulkExtensions
+                            _context.BulkInsert(recordSetL);
+                            
+                            sb.Append("<div class='alert alert-success' role='success'> <h4 class='alert-heading'>" + (recordSet.Count == 0 ? "No Records Updated.!": "Successfully Updated.!") + "</h4></div>" +
+                            "<ul><li>(" + recordSet.Count().ToString() + ") Records Inserted </li> <li>(" + (sheet.LastRowNum - recordSet.Count- emailExistInDb).ToString() + ") Duplicates found and eliminated</li><li>(" + (emailExistInDb).ToString() + ") Already Exist in Database</li></ul>");
+                            sb.Append("<table id='resultGrid' class='table table-striped table-bordered'>");
                             sb.Append("<th>First Name</th><th>Last Name</th><th>Email</th>");
-                            sb.Append(tranferTD + "</tr> </table>");
+                            sb.Append((tranferTD.ToString()=="" ? "<tr><td colspan='3'>No Records to update</td></tr>":tranferTD.ToString()) + "</table>");
                             return Json(Content(sb.ToString()));
                         }
                         else
@@ -338,6 +342,7 @@ namespace CGEvents.Controllers
             if (flag == true) { return sb.ToString(); } else { return ""; }
 
         }
+
 
 
         public ColumnsToDB GetHashSet(IRow row, int cellCount, IList<MandatoryColumns> MColumnList, bool splitcol)
@@ -426,6 +431,21 @@ namespace CGEvents.Controllers
                 return obj.Email.GetHashCode();
             }
         }
+
+        public sealed class EmailComparer1 : IEqualityComparer<Ams>
+        {
+            public bool Equals(Ams x, Ams y)
+            {
+                return x.EmailId.Equals(y.EmailId, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public int GetHashCode(Ams obj)
+            {
+                return obj.EmailId.GetHashCode();
+            }
+        }
+
+
 
         public ActionResult Async_Remove(string[] fileNames)
         {
