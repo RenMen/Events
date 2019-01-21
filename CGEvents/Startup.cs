@@ -53,7 +53,7 @@ namespace CGEvents
             }
 
             //
-            var connection = @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = Configuration.GetConnectionString("EventsDB");// @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MiscFormsContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
             services.AddKendo();
 
