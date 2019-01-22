@@ -6,52 +6,44 @@
                 <span class="badge badge-primary">NEW</span>
             </a>
         </li>
-        @*<li class="nav-title">Events</li>
-        <li class="nav-item">
-          <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="colors">
-            <i class="nav-icon icon-drop"></i> Colors
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="typography">
-            <i class="nav-icon icon-pencil"></i> Typography
-          </a>
-        </li>*@
-        @*<li class="nav-title">Events</li>*@
+
+        <li class="divider"></li>
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-event"></i> Event
             </a>
             <ul class="nav-dropdown-items">
-
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
-                        <i class="nav-icon icon-basket"> Add/Edit/List </i>
+                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index" target="_top">
+                        <i class="nav-icon icon-basket"></i> Add/Edit/List
                     </a>
                 </li>
 
             </ul>
         </li>
-        <li class="divider"></li>
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-people"></i> Invitee
             </a>
             <ul class="nav-dropdown-items">
-
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
-                        <i class="nav-icon icon-basket">Add/Edit/List</i>
+                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index" target="_top">
+                        <i class="nav-icon icon-basket"></i> Add/Edit/List
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Upload" asp-action="Index">
-                        <i class="nav-icon icon-arrow-up-circle">Upload</i>
+                    <a class="nav-link" asp-area="" asp-controller="Upload" asp-action="Index" target="_top">
+                        <i class="nav-icon icon-arrow-up-circle"></i> Upload
                     </a>
                 </li>
 
             </ul>
         </li>
+
+
+
+
+
         @*<li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-cursor"></i> Buttons
@@ -140,34 +132,8 @@
             </a>
         </li>
         <li class="divider"></li>
-        <li class="nav-title">Extras</li>
-        <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="#">
-                <i class="nav-icon icon-star"></i> Pages
-            </a>
-            <ul class="nav-dropdown-items">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="login" target="_top">
-                        <i class="nav-icon icon-star"></i> Login
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="register" target="_top">
-                        <i class="nav-icon icon-star"></i> Register
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="404" target="_top">
-                        <i class="nav-icon icon-star"></i> Error 404
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="CoreUI" asp-action="Index" asp-route-view="500" target="_top">
-                        <i class="nav-icon icon-star"></i> Error 500
-                    </a>
-                </li>
-            </ul>
-        </li>*@
+        <li class="nav-title">Extras</li>*@
+
         @*<li class="nav-item mt-auto">
           <a class="nav-link nav-link-success" href="https://coreui.io" target="_top">
             <i class="nav-icon icon-cloud-download"></i> Download CoreUI
