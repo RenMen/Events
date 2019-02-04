@@ -10,7 +10,7 @@
 
 <div class="table-responsive">
     <div class="card border-info mb-3" style="max-width: 100%;">
-        <div class="card-header">Select an event</div>
+        <div id="eventSelection" class="card-header">Select an event</div>
         <div class="card-body text-info">
 
             <p class="card-text">
@@ -36,20 +36,20 @@
         <div class="card-body ">
             <p class="card-text">
                 @(Html.Kendo().Upload()
-                                                                        .Name("files")
-                                                                        .Async(a => a
-                                                                            .Save("Async_Save", "Upload")
-                                                                            .Remove("Async_Remove", "Upload")
-                                                                            .AutoUpload(true)
-                                                                        )
-                                                                        .Events(events => events
-                                                                        .Success("onSuccess")
-                                                                        .Select("onSelect")
-                                                                        .Upload(@<text>
-                                                                            function(e) {
-                                                                            e.data = { eid:$("#Event").val()};
-                                                                            }
-                                                                        </text>)
+                    .Name("files")
+                    .Async(a => a
+                        .Save("Async_Save", "Upload")
+                        .Remove("Async_Remove", "Upload")
+                        .AutoUpload(true)
+                    )
+                    .Events(events => events
+                    .Success("onSuccess")
+                    .Select("onSelect")
+                    .Upload(@<text>
+                        function(e) {
+                        e.data = { eid:$("#Event").val()};
+                        }
+                    </text>)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 )
                 )
 
@@ -67,8 +67,17 @@
 
 <script>
 
-//$dropdownlist.data("kendoDropDownList").select(2);
-
+    //$dropdownlist.data("kendoDropDownList").select(2);
+    $(function () {
+        var dropdownlist = $("#Event").data("kendoDropDownList");
+        var eid = @ViewData["EventId"];
+        if (eid != null) {
+           
+            dropdownlist.value(@ViewData["EventId"]);
+            dropdownlist.enable(false);
+            $("#eventSelection").html("Event Name");
+        }
+    });
 function onSuccess(e) {
 
 

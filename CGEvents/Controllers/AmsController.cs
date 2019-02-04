@@ -21,7 +21,7 @@ namespace CGEvents.Controllers
         // GET: Ams
         public async Task<IActionResult> Index()
         {
-            var miscFormsContext = _context.Ams.Include(a => a.EventIdNavigation);
+            var miscFormsContext = _context.Ams.Include(a => a.Event);
             return View(await miscFormsContext.ToListAsync());
         }
 
@@ -34,7 +34,7 @@ namespace CGEvents.Controllers
             }
 
             var ams = await _context.Ams
-                .Include(a => a.EventIdNavigation)
+                .Include(a => a.Event)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ams == null)
             {
@@ -130,7 +130,7 @@ namespace CGEvents.Controllers
             }
 
             var ams = await _context.Ams
-                .Include(a => a.EventIdNavigation)
+                .Include(a => a.Event)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ams == null)
             {

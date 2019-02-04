@@ -7,7 +7,7 @@ namespace CGEvents.Models
 {
     public partial class MiscFormsContext : DbContext
     {
-
+  
         public MiscFormsContext(DbContextOptions<MiscFormsContext> options)
             : base(options)
         {
@@ -22,11 +22,6 @@ namespace CGEvents.Models
         public virtual DbSet<EventProgram> EventProgram { get; set; }
         public virtual DbSet<Fb> Fb { get; set; }
         public virtual DbSet<GuestNames> GuestNames { get; set; }
-        public virtual DbSet<IntimationGroupMaster> IntimationGroupMaster { get; set; }
-        public virtual DbSet<IntimationGroupTypeAssociation> IntimationGroupTypeAssociation { get; set; }
-        public virtual DbSet<IntimationLog> IntimationLog { get; set; }
-        public virtual DbSet<IntimationTemplateMaster> IntimationTemplateMaster { get; set; }
-        public virtual DbSet<IntimationTypeMaster> IntimationTypeMaster { get; set; }
         public virtual DbSet<Neu> Neu { get; set; }
         public virtual DbSet<QuestionMaster> QuestionMaster { get; set; }
         public virtual DbSet<QuestionnaireDetails> QuestionnaireDetails { get; set; }
@@ -38,6 +33,7 @@ namespace CGEvents.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
@@ -234,12 +230,11 @@ namespace CGEvents.Models
                     .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.VisaFileName).HasMaxLength(250);
-
-                entity.HasOne(d => d.Event)
-                    .WithMany(p => p.Ams)
-                    .HasForeignKey(d => d.EventId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_AMS_EventMaster");
+                entity.HasOne(d => d.EventIdNavigation)
+                   .WithMany(p => p.Ams)
+                   .HasForeignKey(d => d.EventId)
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_AMS_EventMaster");
             });
 
             modelBuilder.Entity<AmstransferDetails>(entity =>
@@ -296,7 +291,8 @@ namespace CGEvents.Models
                 entity.Property(e => e.DispName)
                     .HasColumnName("dispName")
                     .HasMaxLength(150);
-
+                   
+                
                 entity.Property(e => e.EventAgendaUrl)
                     .HasColumnName("EventAgendaURL")
                     .HasMaxLength(1000);
@@ -427,94 +423,6 @@ namespace CGEvents.Models
                     .HasForeignKey(d => d.InvId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_GuestNames_AMS");
-            });
-
-            modelBuilder.Entity<IntimationGroupMaster>(entity =>
-            {
-                entity.HasKey(e => e.IntimationGroupId);
-
-                entity.Property(e => e.IntimationGroupId)
-                    .HasColumnName("IntimationGroupID")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.IntimationGroupName).HasMaxLength(250);
-            });
-
-            modelBuilder.Entity<IntimationGroupTypeAssociation>(entity =>
-            {
-                entity.HasKey(e => e.IntimationAssocId);
-
-                entity.Property(e => e.IntimationAssocId)
-                    .HasColumnName("IntimationAssocID")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.IntimationGroupId).HasColumnName("IntimationGroupID");
-
-                entity.Property(e => e.IntimationTypeId).HasColumnName("IntimationTypeID");
-
-                entity.HasOne(d => d.IntimationGroup)
-                    .WithMany(p => p.IntimationGroupTypeAssociation)
-                    .HasForeignKey(d => d.IntimationGroupId)
-                    .HasConstraintName("FK_IntimationGroupTypeAssociation_IntimationGroupMaster");
-
-                entity.HasOne(d => d.IntimationType)
-                    .WithMany(p => p.IntimationGroupTypeAssociation)
-                    .HasForeignKey(d => d.IntimationTypeId)
-                    .HasConstraintName("FK_IntimationGroupTypeAssociation_IntimationTypeMaster");
-            });
-
-            modelBuilder.Entity<IntimationLog>(entity =>
-            {
-                entity.HasKey(e => e.IntimationId);
-
-                entity.Property(e => e.IntimationId).HasColumnName("IntimationID");
-
-                entity.Property(e => e.Comment).HasMaxLength(250);
-
-                entity.Property(e => e.DtSend).HasColumnType("datetime");
-
-                entity.Property(e => e.IntimationTypeId).HasColumnName("IntimationTypeID");
-
-                entity.Property(e => e.InviteeId).HasColumnName("InviteeID");
-
-                entity.Property(e => e.UserName).HasMaxLength(250);
-
-                entity.HasOne(d => d.IntimationType)
-                    .WithMany(p => p.IntimationLog)
-                    .HasForeignKey(d => d.IntimationTypeId)
-                    .HasConstraintName("FK_IntimationLog_IntimationTypeMaster");
-
-                entity.HasOne(d => d.Invitee)
-                    .WithMany(p => p.IntimationLog)
-                    .HasForeignKey(d => d.InviteeId)
-                    .HasConstraintName("FK_IntimationLog_AMS");
-            });
-
-            modelBuilder.Entity<IntimationTemplateMaster>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Filename).HasMaxLength(500);
-
-                entity.Property(e => e.IntimationTypeId).HasColumnName("IntimationTypeID");
-
-                entity.Property(e => e.MergeFields).HasMaxLength(1000);
-
-                entity.HasOne(d => d.IntimationType)
-                    .WithMany(p => p.IntimationTemplateMaster)
-                    .HasForeignKey(d => d.IntimationTypeId)
-                    .HasConstraintName("FK_IntimationTemplateMaster_IntimationTypeMaster");
-            });
-
-            modelBuilder.Entity<IntimationTypeMaster>(entity =>
-            {
-                entity.HasKey(e => e.IntimationTypeId);
-
-                entity.Property(e => e.IntimationTypeId)
-                    .HasColumnName("IntimationTypeID")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.IntimationType).HasMaxLength(250);
             });
 
             modelBuilder.Entity<Neu>(entity =>

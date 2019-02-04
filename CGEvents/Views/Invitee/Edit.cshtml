@@ -1,10 +1,10 @@
 ﻿@model CGEvents.Models.Ams
 
 @{
-    ViewData["Title"] = "Edit Invitee - " + Model.EventIdNavigation.EventName;
+    ViewData["Title"] = "Edit Invitee - " + Model.Event.EventName;
     ViewData["Action"] = "Index";
     ViewData["EventId"] = Model.EventId;
-    ViewData["EventName"] = Model.EventIdNavigation.EventName;
+    ViewData["EventName"] = Model.Event.EventName;
     ViewData["CurrentPage"] = "Edit Invitee";
 }
 
@@ -53,7 +53,7 @@
                 </div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="EventId" />
-                <input type="hidden" asp-for="EventIdNavigation.EventName" />
+                <input type="hidden" asp-for="Event.EventName" />
                 <div class="col-lg-4">
                     <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
 
@@ -86,14 +86,14 @@
 
 <div>
 
-    <a asp-action="Index" asp-route-id="@Model.EventId">Back to  @Model.EventIdNavigation.EventName Invitees List</a>
+    <a asp-action="Index" asp-route-id="@Model.EventId">Back to  @Model.Event.EventName Invitees List</a>
 </div>
 
 <script>
         function startOpen() {
             var startPicker = $("#IndvDeadline").data("kendoDateTimePicker");
-            startDate = new Date('@Model.EventIdNavigation.EventDate');
-            endDate = new Date('@Model.EventIdNavigation.EventDateTo');
+            startDate = new Date('@Model.Event.EventDate');
+            endDate = new Date('@Model.Event.EventDateTo');
             today = new Date();
             if (startDate && endDate) {
                 endDate.setHours(endDate.getHours() - 1);

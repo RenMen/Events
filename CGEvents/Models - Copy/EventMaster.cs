@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
 namespace CGEvents.Models
 {
     public partial class EventMaster
@@ -9,6 +10,7 @@ namespace CGEvents.Models
         {
             Ams = new HashSet<Ams>();
         }
+
 
         [Key]
         public short EventId { get; set; }

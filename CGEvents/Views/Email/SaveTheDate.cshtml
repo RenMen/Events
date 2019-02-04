@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewData["Title"] = "SaveTheDate";
+   
+}
+
+<h1>Save The Date @ViewData["EventId"]</h1>
+
+
+<div class="table-responsive">
+    <div class="card border-info mb-3" style="max-width: 100%;">
+        @*<div id="eventSelection" class="card-header">Select an event</div>*@
+        <div class="card-body text-info">
+            <p class="card-text">
+                @(Html.Kendo().DropDownList()
+                                .Name("Event")
+                                .DataTextField("EventName")
+                                .DataValueField("EventId")
+                                .OptionLabel("Select Event ...")
+                                .Events(e => e.Change("onEventChange") )
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                        read.Action("GetEvents", "Email");
+                                    });
+                                })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                )
+            </p>
+
+
+
+            <p class="card-text">
+                @(Html.Kendo().DropDownList()
+                            .Name("Template")
+                            .DataTextField("Filename")
+                            .DataValueField("ID")
+                            .OptionLabel("Select Template ...")
+                            .Events(e => e.Change("onTemplateChange"))
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetTemplates", "Email");
+                                });
+                            })
+                            .HtmlAttributes(new { style = "width: 100%" })
+                )
+            </p>
+
+
+            <p class="card-text">
+                @(Html.Kendo().DropDownList()
+                            .Name("Filter")
+                            .DataTextField("IntimationGroupName")
+                            .DataValueField("IntimationGroupID")
+                            .Events(e => e.Change("onFilterChange"))
+                            .OptionLabel("Select filter ...")
+                           
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetFilter", "Email");
+                                });
+                            })
+                            .HtmlAttributes(new { style = "width: 100%" })
+                )
+            </p>
+        </div>
+    </div>
+
+
+    <div class="card border-info mb-3" style="max-width: 100%;">
+        @*<div id="eventSelection" class="card-header">Select an event</div>*@
+        <div class="card-body text-info">
+            <p class="card-text">
+                @(Html.Kendo().Grid<CGEvents.Models.Ams>()
+                       .Name("grdInvitee")
+                           .Columns(columns =>
+                           {
+                               columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
+                               columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
+                               columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
+                               columns.Bound(p => p.Position).Filterable(false).Title("Position");
+                               columns.Bound(p => p.Company).Filterable(false).Title("Company");
+                               columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
+                               columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
+
+                           })
+                           .NoRecords(false)
+                           .ToolBar(toolbar =>
+                           {
+                               toolbar.ClientTemplate("<a id='newInvitee' class='k-button' href=''>Add New Invitee(s)</a>" +
+                                   "<div class='toolbar'> <a  id='uploadInvitee' class='k-button' href=''> Import Invitees List </a>   </div>");
+                           })
+                       .Pageable()
+                       .Sortable()
+                       .Scrollable()
+                       .AutoBind(false)
+                       .Filterable()
+                       .HtmlAttributes(new { style = "height:550px;" })
+                       .DataSource(dataSource => dataSource
+                       .Ajax()
+                       .ServerOperation(false)
+                       .PageSize(20)
+                       .Read(read => read.Action("ReadInvitees", "Invitee").Data("additionalData"))
+                       
+                       )
+                )
+            </p>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(function () {
+
+        $("#Template").data("kendoDropDownList").wrapper.hide();// call for hide kendo dropdown call
+        $("#Filter").data("kendoDropDownList").wrapper.hide();
+        $("#grdInvitee").data('kendoGrid').wrapper.hide();
+
+    });
+
+
+
+
+
+    function additionalData(e) {
+        var value = $("#Event").data("kendoDropDownList").value();
+        return { eid: value }; // send the event id value as part of the Read request
+    }
+    function onEventChange() {
+        var eid = this.value();
+        if (eid == '') {
+            eid = null;
+            $("#newInvitee").attr('href', '/Invitee/Create?eid=null' );
+            $("#uploadInvitee").attr('href', '/Upload?eid=null' );
+            $("#grdInvitee").data('kendoGrid').dataSource.data([]);
+            $("#Template").data("kendoDropDownList").wrapper.hide();
+            $("#Filter").data("kendoDropDownList").wrapper.hide();
+            $("#grdInvitee").data('kendoGrid').wrapper.hide();
+        }
+        else {
+            $("#Template").data("kendoDropDownList").wrapper.show();
+        }
+    }
+    function onTemplateChange() {
+        var eid = this.value();
+        if (eid != '') {
+
+            $("#Filter").data("kendoDropDownList").wrapper.show();
+
+        }
+    }
+    
+    function onFilterChange() {
+        var id = this.value();
+        var eid = $("#Event").data("kendoDropDownList").value()
+        if (id != '') {
+            $("#grdInvitee").data('kendoGrid').wrapper.show();
+            $("#newInvitee").attr('href', '/Invitee/Create?eid=' + eid);
+            $("#uploadInvitee").attr('href', '/Upload?eid=' + eid);
+
+            $.get('/Invitee/ReadInvitees', { eid: eid }, function (data) { // create a control to read all invitees who have no records in intimation table or all invitees  based on filter selection
+                var grid = $("#grdInvitee").data("kendoGrid");
+                grid.dataSource.read(); // rebind the Grid's DataSource
+            })
+        }
+        else {
+            $("#grdInvitee").data('kendoGrid').dataSource.data([]); 
+            $("#grdInvitee").data('kendoGrid').wrapper.hide();
+        }
+    }
+
+</script>
+<style>
+    .toolbar {
+        float: right;
+    }
+
+    /*.custom-file-label {
+        box-sizing: border-box !important;
+    }*/
+</style>
+
+

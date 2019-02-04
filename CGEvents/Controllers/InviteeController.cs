@@ -65,7 +65,7 @@ namespace CGEvents.Controllers
             return _context.Ams
                  .Where(i => i.Id == id)
                  .Select(eve =>
-                        new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName, EventDate = eve.EventIdNavigation.EventDate, EventDateTo = eve.EventIdNavigation.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId }).ToList();   //.Select(event => EventMa ).ToList();
+                        new InviteeWithEventDetils { EventName = eve.Event.EventName, EventDate = eve.Event.EventDate, EventDateTo = eve.Event.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId }).ToList();   //.Select(event => EventMa ).ToList();
 
         }
 
@@ -74,7 +74,7 @@ namespace CGEvents.Controllers
             return _context.Ams
             .Where(id => id.EventId == eid)
             .Select(eve =>
-                    new InviteeWithEventDetils { EventName = eve.EventIdNavigation.EventName,EventDate=eve.EventIdNavigation.EventDate,EventDateTo=eve.EventIdNavigation.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
+                    new InviteeWithEventDetils { EventName = eve.Event.EventName,EventDate=eve.Event.EventDate,EventDateTo=eve.Event.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
 
         }
 
@@ -82,10 +82,10 @@ namespace CGEvents.Controllers
         //private IEnumerable<Ams> GetInvitees1(int? eid)
         //{
 
-        //    return _context.Ams.Include(e => e.EventIdNavigation)
+        //    return _context.Ams.Include(e => e.Event)
         //       .Where(id => id.EventId == eid)
         //       .Select(eve =>
-        //               new Ams { EventIdNavigation.EventName=eve.EventIdNavigation.EventName, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
+        //               new Ams { Event.EventName=eve.Event.EventName, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
 
         //}
 
@@ -98,6 +98,8 @@ namespace CGEvents.Controllers
             }
             else if (eid != null && id == null)
             {
+                ViewData["EventId"] = eid;
+                //ViewData["EventName"] = GetEventName(eid);
                 return Json(await GetInvitees(eid).ToDataSourceResultAsync(request));
 
             }
@@ -152,7 +154,8 @@ namespace CGEvents.Controllers
 
         public string GetEventName(short? eid)
         {
-            return _context.Ams.Include(s=>s.EventIdNavigation).Where(w => w.EventId == eid).FirstOrDefault().EventIdNavigation.EventName;
+            //  return _context.Ams.Include(s=>s.Event).Where(w => w.EventId == eid).FirstOrDefault().Event.EventName;
+            return _context.EventMaster.Where(w => w.EventId == eid).FirstOrDefault().EventName;
         }
 
         // POST: Ams/Create
@@ -366,7 +369,7 @@ namespace CGEvents.Controllers
                 return NotFound();
             }
 
-            var ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);
+            var ams = await _context.Ams.Include(e => e.Event).FirstOrDefaultAsync(i => i.Id == id);
             // var ams = await _context.Ams.FindAsync(id);
             if (ams == null)
             {
@@ -409,7 +412,7 @@ namespace CGEvents.Controllers
                 return RedirectToAction("Index", "Invitee", new { eid = ams.EventId });
             }
             // return RedirectToAction(nameof(Index));
-            ams = await _context.Ams.Include(e => e.EventIdNavigation).FirstOrDefaultAsync(i => i.Id == id);
+            ams = await _context.Ams.Include(e => e.Event).FirstOrDefaultAsync(i => i.Id == id);
             return View(ams);
         }
 

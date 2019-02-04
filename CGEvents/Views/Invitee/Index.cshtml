@@ -36,7 +36,7 @@
                      .ToolBar(toolbar =>
                      {
                          toolbar.ClientTemplate("<a class='k-button' href='" + @Url.Action("Create", "Invitee") + "?eid=" + @ViewData["EventId"] + "'>Add New Invitee(s)</a>" +
-                             "<div class='toolbar'> <input class='k-button' type='button' id='btnImport' value='Import Invitees List'/>  </div>");
+                             "<div class='toolbar'> <a class='k-button' href='" + @Url.Action("Index", "Upload") + "?eid=" + @ViewData["EventId"] + "'> Import Invitees List </a>   </div>");
                      })
                  .Pageable()
                  .Sortable()
@@ -54,41 +54,13 @@
 </div>
 
 @(Html.Kendo().Window()
-                .Name("window")
-
+            .Name("window")
             .Title("Upload")
-            .Content(@<text>
+            .Content("loading upload control...")
+            .LoadContentFrom("Index", "Upload")
+            @*.Content(@<text>
                 <h4>Upload</h4>
-
-                @*<div class="row" id="window">
-                        <div class="col-md-4">
-                            <input type="file" id="fUpload" name="files" class="form-control" />
-                        </div>
-                        <div class="col-md-8">
-                            <input type="button" id="btnUpload" value="Upload" class="k-button" />
-                        </div>
-                    </div>*@
-
-                    @*<div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-                                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
-                            </div>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="btnUpload">Button</button>
-                            </div>
-                        </div>*@
-
-                        @*<div class="input-group mb-3">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="fUpload" aria-describedby="btnUpload">
-                                    <label class="custom-file-label" for="fUpload">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-outline-secondary" id="btnUpload">Upload</button>
-
-                                </div>
-                            </div*@
+                          
         @(Html.Kendo().Upload()
                     .Name("files")
                     .Async(a => a
@@ -102,7 +74,10 @@
                     .Select("onSelect")
                             
 
-    )
+            )
+
+
+
         )
 
 
@@ -111,7 +86,7 @@
         <div class="console" id="UploadStatusConsole">@ViewData["Import Error"]</div>
     </div>
 
-            </text>)
+            </text>)*@
                         .Draggable()
                         .Resizable()
                         .Width(600)
@@ -130,7 +105,8 @@
         //https://docs.telerik.com/aspnet-mvc/getting-started/fundamentals
         //refer above link - why the below function should not move out of documen ready
         $("#btnImport").on("click", function () {
-            showAlertWindow();
+           showAlertWindow();
+           
         });
 
     
@@ -194,6 +170,7 @@
 
         var alertWindow = $('#window').data('kendoWindow');
         //alertWindow.content(message);
+       
         alertWindow.refresh();
         alertWindow.center();
         alertWindow.open();
@@ -214,17 +191,17 @@
         }
     };
 
-    function onSuccess(e) {
-        console.write(e.response.Content);
-        $('#UploadStatusConsole').html(e.response.Content);
-        $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
-    };
+    //function onSuccess(e) {
+    //    console.write(e.response.Content);
+    //    $('#UploadStatusConsole').html(e.response.Content);
+    //    $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
+    //};
 
-    function onSelect(e) {
-        var uploadWidget = $("#files").getKendoUpload();
-        uploadWidget.clearAllFiles();
-        $('#UploadStatusConsole').html('');
-    };
+    //function onSelect(e) {
+    //    var uploadWidget = $("#files").getKendoUpload();
+    //    uploadWidget.clearAllFiles();
+    //    $('#UploadStatusConsole').html('');
+    //};
 </script>
 <style>
     .toolbar {

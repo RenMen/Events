@@ -66,10 +66,7 @@
                         .HtmlAttributes(new { onkeydown = "javascript:return false;" })
                     )
 
-
                     <span asp-validation-for="EventDateTo" class="text-danger"></span>
-
-
                 </div>
 
                 <div class="col-lg-4">
@@ -91,8 +88,6 @@
 
                         )
                         <span asp-validation-for="FormDeadline" class="text-danger"></span>
-                
-
                 </div>
             </div>
         </div>
@@ -115,7 +110,7 @@
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
             <label asp-for="MailHeader" class="control-label">Upload and Insert Creative</label>
             @(Html.Kendo().Editor()
-.Encoded(false)
+                        .Encoded(false)
                         .Name("MailHeader")
                         .HtmlAttributes(new { style = "height:350px" })
                         .Tools(tools => tools

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
 namespace CGEvents.Models
 {
     public partial class Ams
@@ -9,7 +10,7 @@ namespace CGEvents.Models
         {
             AmstransferDetails = new HashSet<AmstransferDetails>();
             GuestNames = new HashSet<GuestNames>();
-            IntimationLog = new HashSet<IntimationLog>();
+            
         }
         [Required(ErrorMessage = "First Name Required")]
         public string Fname { get; set; }
@@ -79,10 +80,10 @@ namespace CGEvents.Models
         public DateTime? IndvDeadline { get; set; }
         public string Position { get; set; }
         public bool? ActualAttendance { get; set; }
-
-        public virtual EventMaster Event { get; set; }
+        public virtual EventMaster EventIdNavigation { get; set; }
         public virtual ICollection<AmstransferDetails> AmstransferDetails { get; set; }
         public virtual ICollection<GuestNames> GuestNames { get; set; }
-        public virtual ICollection<IntimationLog> IntimationLog { get; set; }
+     
+        
     }
 }

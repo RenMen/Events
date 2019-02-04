@@ -37,12 +37,13 @@
         <li class="nav-item d-md-down-none">
             <span class="nav-text text-dark">Hello  @User.Claims.Single(a => a.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value!</span>
         </li>
-  
+
         <li class="nav-item d-md-down-none">
-            <a class="nav-link text-dark" asp-area="AzureAD" asp-controller="Account" asp-action="SignOut">
-                <i class="icon-logout"></i>
-                @*<i class="fa fa-lock"></i>*@
-            </a>
+            @*<span class="nav-link text-dark" asp-area="AzureAD" asp-controller="Account" asp-action="SignOut">*@
+               
+                <a  class="nav-link text-dark" asp-area="AzureAD" asp-controller="Account" asp-action="SignOut">  <i class="icon-logout"></i></a>
+        @*//<i class="fa fa-lock"></i>*@
+       
         </li>
 
         <!-- USER-NAV -->
@@ -61,8 +62,8 @@
     {
         <ul class="nav navbar-nav ml-auto">
             @*<li class="nav-item px-3">
-                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-            </li>*@
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                </li>*@
             <li class="nav-item px-3">
                 <a class="nav-link text-dark" asp-area="AzureAD" asp-controller="Account" asp-action="SignIn">Sign in</a>
             </li>

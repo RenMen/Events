@@ -28,7 +28,7 @@ namespace CGEvents
         {
             Configuration = configuration;
             Environment = env;
-           
+
         }
 
         public IConfiguration Configuration { get; }
@@ -36,8 +36,8 @@ namespace CGEvents
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (!Environment.IsDevelopment())
-            {
+            //if (!Environment.IsDevelopment())
+            //{
 
                 services.Configure<CookiePolicyOptions>(options =>
             {
@@ -45,12 +45,15 @@ namespace CGEvents
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-           
-            //https://docs.telerik.com/aspnet-core/getting-started/getting-started
- 
                 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
-            }
+                //https://docs.telerik.com/aspnet-core/getting-started/getting-started
+
+
+            //}
+
+
+
 
             //
             var connection = Configuration.GetConnectionString("EventsDB");// @"Server=Marketing2016;Database=MiscForms;Trusted_Connection=True;ConnectRetryCount=0";
@@ -69,25 +72,25 @@ namespace CGEvents
             });
 
 
-
-            services                
+            services
                .AddMvc(options =>
             {
                 if (!Environment.IsDevelopment())
                 {
-                    //options.EnableEndpointRouting = false;
-                    var policy = new AuthorizationPolicyBuilder()
-                        .RequireAuthenticatedUser()
-                        .Build();
-                    options.Filters.Add(new AuthorizeFilter(policy));
+
                 }
+                //options.EnableEndpointRouting = false;
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddJsonOptions(options =>
             options.SerializerSettings.ContractResolver = new DefaultContractResolver()); ;
         }
 
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -108,13 +111,16 @@ namespace CGEvents
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-         //   app.UseCookiePolicy();  need to remove 
+            //   app.UseCookiePolicy();  need to remove 
 
-            if (!env.IsDevelopment())
-            {
+            //if (!env.IsDevelopment())
+            //{
                 app.UseAuthentication();
                 // Register external authentication middleware
-            }
+            //}
+
+           
+
             app.UseResponseCompression();
             app.UseResponseCompression();
             //https://stackoverflow.com/questions/51107638/asp-net-core-mvc-routing-not-working-in-visual-studio-2017-after-changing-appl

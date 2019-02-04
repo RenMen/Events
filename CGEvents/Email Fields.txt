@@ -1,0 +1,9 @@
+*|MC:SUBJECT|*
+*|FNAME|*
+*|BODYIMAGE|*  <img align="center" alt="" src="*|BODYIMAGE|*" width="590.6666870117188" style="max-width:600px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage">
+*|ATTEND|*
+*|NATTEND|*
+*|MONTH|* 
+*|YEAR|*
+*|D|*
+*|SIGNATURE|*

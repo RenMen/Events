@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models - Copy\**" />
+    <Content Remove="Models - Copy\**" />
+    <EmbeddedResource Remove="Models - Copy\**" />
+    <None Remove="Models - Copy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 

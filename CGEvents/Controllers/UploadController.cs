@@ -73,9 +73,10 @@ namespace CGEvents.Controllers
             public int EventId { get; set; }
         }
 
+        //Get all upcoming events
         public ActionResult GetEvents()
         {
-            var EventsDropDownList = _context.EventMaster.Select(e => new EventDropDownModel
+            var EventsDropDownList = _context.EventMaster.Where(id=> id.EventDateTo >= DateTime.Today).Select(e => new EventDropDownModel
             {
                 EventName = e.EventName,
                 EventId = e.EventId
