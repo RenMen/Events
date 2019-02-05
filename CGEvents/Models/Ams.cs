@@ -29,6 +29,7 @@ namespace CGEvents.Models
         public DateTime? Adate { get; set; }
         public short? Dtime { get; set; }
         public DateTime? Ddate { get; set; }
+        [Key]
         public int Id { get; set; }
         public string AcityName { get; set; }
         public string DcityName { get; set; }

@@ -17,12 +17,12 @@ namespace CGEvents.Controllers
     public class InviteeController : Controller
     {
         private readonly MiscFormsContext _context;
-       
+
 
         public InviteeController(MiscFormsContext context)
         {
             _context = context;
-      
+
         }
 
         // GET: Ams/Index/
@@ -58,6 +58,7 @@ namespace CGEvents.Controllers
             public DateTime? EventDateTo { get; set; }
             public DateTime? EventDate { get; set; }
             public short? EventGroupId { get; set; }
+            public byte? InvTypeID { get; set; }
         }
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
         {
@@ -69,27 +70,69 @@ namespace CGEvents.Controllers
 
         }
 
-        private IEnumerable<InviteeWithEventDetils> GetInvitees(int? eid)
+        private IEnumerable<InviteeWithEventDetils> GetInvitees(int? eid, byte? InvTypeID)
         {
-            return _context.Ams
-            .Where(id => id.EventId == eid)
-            .Select(eve =>
-                    new InviteeWithEventDetils { EventName = eve.Event.EventName,EventDate=eve.Event.EventDate,EventDateTo=eve.Event.EventDateTo, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupID = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
-
+            switch (InvTypeID)
+            {
+                case 1: //use linqpad to create the below complex lambda expression
+                  return  _context.Ams
+                       .Where(u => u.EventId == eid)
+                       .GroupJoin(
+                          _context.IntimationLog
+                             .Where(u => ((Int32?)(u.IntimationTypeId) == (Int32?)InvTypeID)),
+                          ams => (Int32?)(ams.Id),
+                          intimation => intimation.InviteeId,
+                          (ams, joinAMSIntimation) =>
+                             new
+                             {
+                                 ams,
+                                 joinAMSIntimation
+                             }
+                           )
+                           .SelectMany(
+                              eve => eve.joinAMSIntimation.DefaultIfEmpty().Where(u => (u.InviteeId == null)),
+                              (eve, intimation) =>
+                                 new InviteeWithEventDetils
+                                 {
+                                     EventName = eve.ams.Event.EventName,
+                                     EventDate = eve.ams.Event.EventDate,
+                                     EventDateTo = eve.ams.Event.EventDateTo,
+                                     EventId = eve.ams.Event.EventId,
+                                     Id = eve.ams.Id,
+                                     Fname = eve.ams.Fname,
+                                     Lname = eve.ams.Lname,
+                                     Position = eve.ams.Position,
+                                     Company = eve.ams.Company,
+                                     EmailId = eve.ams.EmailId,
+                                     EventGroupID = eve.ams.EventGroupId,
+                                    // InvTypeID=intimation.IntimationTypeId
+                                 }
+                           );
+                    
+                default:
+                    return _context.Ams
+                   .Where(id => id.EventId == eid)
+                   .Select(eve =>
+                           new InviteeWithEventDetils
+                           {
+                               EventName = eve.Event.EventName,
+                               EventDate = eve.Event.EventDate,
+                               EventDateTo = eve.Event.EventDateTo,
+                               EventId = eve.EventId,
+                               Id = eve.Id,
+                               Fname = eve.Fname,
+                               Lname = eve.Lname,
+                               Position = eve.Position,
+                               Company = eve.Company,
+                               EmailId = eve.EmailId,
+                               EventGroupID = eve.EventGroupId,
+                              // InvTypeID = InvTypeID
+                           });  
+            }
         }
+        
 
-
-        //private IEnumerable<Ams> GetInvitees1(int? eid)
-        //{
-
-        //    return _context.Ams.Include(e => e.Event)
-        //       .Where(id => id.EventId == eid)
-        //       .Select(eve =>
-        //               new Ams { Event.EventName=eve.Event.EventName, EventId = eve.EventId, Id = eve.Id, Fname = eve.Fname, Lname = eve.Lname, Position = eve.Position, Company = eve.Company, EmailId = eve.EmailId, EventGroupId = eve.EventGroupId });   //.Select(event => EventMa ).ToList();
-
-        //}
-
-        public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid, int? id)
+        public async Task<IActionResult> ReadInvitees([DataSourceRequest] DataSourceRequest request, int? eid, int? id, byte? InvTypeID)
         {
 
             if (eid == null && id == null)
@@ -98,9 +141,7 @@ namespace CGEvents.Controllers
             }
             else if (eid != null && id == null)
             {
-                ViewData["EventId"] = eid;
-                //ViewData["EventName"] = GetEventName(eid);
-                return Json(await GetInvitees(eid).ToDataSourceResultAsync(request));
+                return Json(await GetInvitees(eid, InvTypeID).ToDataSourceResultAsync(request));
 
             }
             else if (id != null)
@@ -149,7 +190,7 @@ namespace CGEvents.Controllers
         }
         public short? GetNextGroupID(short? eid)
         {
-            return _context.Ams.Where(w => w.EventId == eid).Select(p => p.EventGroupId).Max(); 
+            return _context.Ams.Where(w => w.EventId == eid).Select(p => p.EventGroupId).Max();
         }
 
         public string GetEventName(short? eid)
@@ -177,14 +218,14 @@ namespace CGEvents.Controllers
         //**********https://docs.telerik.com/aspnet-core/html-helpers/data-management/grid/editing/batch-editing.html *********
         //****************
 
-        public async Task<ActionResult> Invitee_Read([DataSourceRequest]DataSourceRequest request,short? eid)
+        public async Task<ActionResult> Invitee_Read([DataSourceRequest]DataSourceRequest request, short? eid)
         {
             //ToDataSourceResult works with IEnumerable and IQueryable
-            
-            IEnumerable<Ams> Invitees = await _context.Ams.Where(i => i.EventId == eid && i.EventGroupId==-1).ToListAsync(); // EventGroupId=-1 inorder to return empty row
+
+            IEnumerable<Ams> Invitees = await _context.Ams.Where(i => i.EventId == eid && i.EventGroupId == -1).ToListAsync(); // EventGroupId=-1 inorder to return empty row
             DataSourceResult result = Invitees.ToDataSourceResult(request);
-               return Json(result);
-            
+            return Json(result);
+
         }
 
         public async Task<ActionResult> Invitee_Create([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
@@ -193,7 +234,7 @@ namespace CGEvents.Controllers
             try
             {
                 // Will keep the inserted entitites here. Used to return the result later.
-                
+
                 if (ModelState.IsValid)
                 {
                     foreach (var Invitee in ams)
@@ -250,7 +291,7 @@ namespace CGEvents.Controllers
                 {
                     messageToClient = e.InnerException.Message;
                 }
-               
+
                 ModelState.AddModelError(string.Empty, messageToClient);
                 // Return the inserted entities. The Grid needs the generated ProductID. Also return any validation errors.
                 return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
@@ -264,7 +305,7 @@ namespace CGEvents.Controllers
                     EventGroupId = Invitee.EventGroupId
                 }));
             }
-            
+
         }
 
         public async Task<ActionResult> Invitee_Update([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
@@ -317,7 +358,7 @@ namespace CGEvents.Controllers
         }
         public async Task<ActionResult> Invitee_Destroy([DataSourceRequest]DataSourceRequest request, [Bind(Prefix = "models")]IEnumerable<Ams> ams)
         {
-             // Will keep the inserted entitites here. Used to return the result later.
+            // Will keep the inserted entitites here. Used to return the result later.
             var entities = new List<Ams>();
             if (ModelState.IsValid)
             {
@@ -340,13 +381,13 @@ namespace CGEvents.Controllers
                     _context.Ams.Attach(entity);
                     // Delete the entity.
                     _context.Ams.Remove(entity);
-                        // Or use DeleteObject if using a previous versoin of Entity Framework.
-                        // northwind.Products.DeleteObject(entity);
-                    }
+                    // Or use DeleteObject if using a previous versoin of Entity Framework.
+                    // northwind.Products.DeleteObject(entity);
+                }
                 // Delete the entity in the database.
                 _context.SaveChanges();
-                }
-       
+            }
+
             // Return the destroyed entities. Also return any validation errors.
             return Json(await entities.ToDataSourceResultAsync(request, ModelState, Invitee => new Ams
             {
@@ -450,11 +491,11 @@ namespace CGEvents.Controllers
             return _context.Ams.Any(e => e.Id == id);
         }
 
-       
+
 
 
     }
 }
 
-    
+
 

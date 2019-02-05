@@ -31,7 +31,7 @@
                           .Filterable()
                           .HtmlAttributes(new { style = "height:550px;" })
                           .DataSource(dataSource => dataSource
-                              .Ajax()
+                              .Ajax()                              
                               .ServerOperation(false)
                               .PageSize(20)
                               .Read(read => read.Action("ReadEvents", "Events"))
