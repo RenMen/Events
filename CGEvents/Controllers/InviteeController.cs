@@ -57,7 +57,6 @@ namespace CGEvents.Controllers
             public short? EventGroupID { get; set; }
             public DateTime? EventDateTo { get; set; }
             public DateTime? EventDate { get; set; }
-            public short? EventGroupId { get; set; }
             public byte? InvTypeID { get; set; }
         }
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)

@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/lib/CGBootsrap4.1.3/CGBootstrap4.1.3.css",
     "inputFile": "wwwroot/lib/CGBootsrap4.1.3/CGBootstrap4.1.3.scss"
+  },
+  {
+    "outputFile": "wwwroot/SiteJS/SiteJS.es5.js",
+    "inputFile": "wwwroot/SiteJS/SiteJS.js"
   }
 ]
