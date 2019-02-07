@@ -14,12 +14,12 @@ function PostIDs() {
         // dataItem.push( grid.dataItem($(this)).toJSON());
         //dataItem.push(grid.dataItem($(this)).Id);
     });
-
+    console.log(JSON.stringify(dataItem));
     $.ajax({
         type: "POST",
-        url: "/Email/SendMessage",
+        url: "/Invitee/SendMessage",
         contentType: "application/json",
-        data: JSON.stringify({ IDs: dataItem })
+        data: JSON.stringify({dataItem })
     }).done(function (data) {
         console.log(data);
     });

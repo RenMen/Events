@@ -59,6 +59,14 @@ namespace CGEvents.Controllers
             public DateTime? EventDate { get; set; }
             public byte? InvTypeID { get; set; }
         }
+
+        [HttpPost]
+        public IActionResult SendMessage(InviteeWithEventDetils IDs)
+        {
+            //var IDs= Request.HttpContext.Items["IDs"];
+            return View("SaveTheDate");
+        }
+
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
         {
 

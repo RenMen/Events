@@ -32,12 +32,7 @@ namespace CGEvents.Controllers
             public short IntimationGroupID { get; set; }
             public string IntimationGroupName { get; set; }
         }
-        [HttpPost]
-        public IActionResult SendMessage(string IDs)
-        {
-            //var IDs= Request.HttpContext.Items["IDs"];
-            return View("SaveTheDate");
-        }
+
         public IActionResult Index()
         {
             return View("SaveTheDate");
