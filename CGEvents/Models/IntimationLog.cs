@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CGEvents.Models
 {
     public partial class IntimationLog
     {
+       
         public int IntimationId { get; set; }
         public int? InviteeId { get; set; }
         public byte? IntimationTypeId { get; set; }

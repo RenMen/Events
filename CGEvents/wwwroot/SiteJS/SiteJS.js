@@ -9,17 +9,19 @@
 function PostIDs() {
     var grid = $("#grdInvitee").data("kendoGrid");
     var dataItem = [];
+    //var a = "test";
     grid.select().each(function () {
-        dataItem.push(grid.dataItem($(this)));
+        //dataItem.push(grid.dataItem($(this)));
         // dataItem.push( grid.dataItem($(this)).toJSON());
-        //dataItem.push(grid.dataItem($(this)).Id);
+        dataItem.push(grid.dataItem($(this)).Id);
     });
-    console.log(JSON.stringify(dataItem));
+    //console.log(JSON.stringify(dataItem));
     $.ajax({
-        type: "POST",
+        method: "POST",
         url: "/Invitee/SendMessage",
-        contentType: "application/json",
-        data: JSON.stringify({dataItem })
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(dataItem)//JSON.stringify({dataItem })
     }).done(function (data) {
         console.log(data);
     });

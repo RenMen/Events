@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CGEvents.Models
 {
@@ -11,7 +12,7 @@ namespace CGEvents.Models
             IntimationLog = new HashSet<IntimationLog>();
             IntimationTemplateMaster = new HashSet<IntimationTemplateMaster>();
         }
-
+       
         public byte IntimationTypeId { get; set; }
         public string IntimationType { get; set; }
 

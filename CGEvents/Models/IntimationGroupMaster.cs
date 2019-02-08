@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CGEvents.Models
 {
@@ -9,7 +10,7 @@ namespace CGEvents.Models
         {
             IntimationGroupTypeAssociation = new HashSet<IntimationGroupTypeAssociation>();
         }
-
+        
         public byte IntimationGroupId { get; set; }
         public string IntimationGroupName { get; set; }
 

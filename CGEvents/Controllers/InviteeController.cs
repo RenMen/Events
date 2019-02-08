@@ -43,6 +43,8 @@ namespace CGEvents.Controllers
             return View();
         }
 
+
+
         //This class is used to limit sql column on both tables. see the sql profiler
         public class InviteeWithEventDetils
         {
@@ -61,10 +63,10 @@ namespace CGEvents.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendMessage(InviteeWithEventDetils IDs)
+        public IActionResult SendMessage([FromBody] int[] a)
         {
-            //var IDs= Request.HttpContext.Items["IDs"];
-            return View("SaveTheDate");
+           //var IDs= Request.HttpContext.Items["IDs"];
+            return View();
         }
 
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)

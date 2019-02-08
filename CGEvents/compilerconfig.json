@@ -6,5 +6,9 @@
   {
     "outputFile": "wwwroot/SiteJS/SiteJS.es5.js",
     "inputFile": "wwwroot/SiteJS/SiteJS.js"
+  },
+  {
+    "outputFile": "wwwroot/SiteJS/SiteJS.es5.min.es5.js",
+    "inputFile": "wwwroot/SiteJS/SiteJS.es5.min.js"
   }
 ]

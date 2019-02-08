@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -59,7 +60,6 @@ namespace CGEvents.Models
                 entity.Property(e => e.AffId)
                     .HasColumnName("AffID")
                     .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Affiliation).HasMaxLength(100);
             });
 
