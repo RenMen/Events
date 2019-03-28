@@ -27,17 +27,19 @@
 
   <ItemGroup>
     <PackageReference Include="EFCore.BulkExtensions" Version="2.3.7" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.2" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2018.3.1017" />
   </ItemGroup>
 
 
   <ItemGroup>
+    <Folder Include="Views\EmailTemplate\" />
     <Folder Include="Views\View\" />
   </ItemGroup>
 

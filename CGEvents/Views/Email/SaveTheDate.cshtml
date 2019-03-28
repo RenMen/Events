@@ -13,19 +13,19 @@
         <div class="card-body text-info">
             <p class="card-text">
                 @(Html.Kendo().DropDownList()
-                                                .Name("Event")
-                                                .DataTextField("EventName")
-                                                .DataValueField("EventId")
-                                                .OptionLabel("Select Event ...")
-                                                .Events(e => e.Change("onEventChange"))
-                                                .DataSource(source =>
-                                                {
-                                                    source.Read(read =>
-                                                    {
-                                                        read.Action("GetEvents", "Email");
-                                                    });
-                                                })
-                                                .HtmlAttributes(new { style = "width: 100%" })
+                    .Name("Event")
+                    .DataTextField("EventName")
+                    .DataValueField("EventId")
+                    .OptionLabel("Select Event ...")
+                    .Events(e => e.Change("onEventChange"))
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("GetEvents", "Email");
+                        });
+                    })
+                    .HtmlAttributes(new { style = "width: 100%" })
                 )
             </p>
 
@@ -33,39 +33,39 @@
 
             <p class="card-text">
                 @(Html.Kendo().DropDownList()
-                                            .Name("Template")
-                                            .DataTextField("Filename")
-                                            .DataValueField("ID")
-                                            .OptionLabel("Select Template ...")
-                                            .Events(e => e.Change("onTemplateChange"))
-                                            .DataSource(source =>
-                                            {
-                                                source.Read(read =>
-                                                {
-                                                    read.Action("GetTemplates", "Email");
-                                                });
-                                            })
-                                            .HtmlAttributes(new { style = "width: 100%" })
+                    .Name("Template")
+                    .DataTextField("Filename")
+                    .DataValueField("ID")
+                    .OptionLabel("Select Template ...")
+                    .Events(e => e.Change("onTemplateChange"))
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("GetTemplates", "Email");
+                        });
+                    })
+                    .HtmlAttributes(new { style = "width: 100%" })
                 )
             </p>
 
 
             <p class="card-text">
                 @(Html.Kendo().DropDownList()
-                                            .Name("Filter")
-                                            .DataTextField("IntimationGroupName")
-                                            .DataValueField("IntimationGroupID")
-                                            .Events(e => e.Change("onFilterChange"))
-                                            .OptionLabel("Select filter ...")
+                    .Name("Filter")
+                    .DataTextField("IntimationGroupName")
+                    .DataValueField("IntimationGroupID")
+                    .Events(e => e.Change("onFilterChange"))
+                    .OptionLabel("Select filter ...")
 
-                                            .DataSource(source =>
-                                            {
-                                                source.Read(read =>
-                                                {
-                                                    read.Action("GetFilter", "Email");
-                                                });
-                                            })
-                                            .HtmlAttributes(new { style = "width: 100%" })
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("GetFilter", "Email");
+                        });
+                    })
+                    .HtmlAttributes(new { style = "width: 100%" })
                 )
             </p>
         </div>
@@ -77,40 +77,40 @@
         <div class="card-body text-info">
             <p class="card-text">
                 @(Html.Kendo().Grid<CGEvents.Controllers.InviteeController.InviteeWithEventDetils>()
-                                       .Name("grdInvitee")
-                                           .Columns(columns =>
-                                           {
-                                               columns.Select().Width(50);
-                                               columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
-                                               columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
-                                               columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
-                                               // columns.Bound(p => p.IntimationLog.Select(i=>i.IntimationTypeId).FirstOrDefault()).Filterable(false).Title("Intimation Type");
-                                               columns.Bound(p => p.Company).Filterable(false).Title("Company");
-                                               columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
+                    .Name("grdInvitee")
+                        .Columns(columns =>
+                        {
+                            columns.Select().Width(50);
+                            columns.Bound(p => p.Fname).Filterable(false).Title("First Name");
+                            columns.Bound(p => p.Lname).Filterable(false).Title("Last Name");
+                            columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
+                            // columns.Bound(p => p.IntimationLog.Select(i=>i.IntimationTypeId).FirstOrDefault()).Filterable(false).Title("Intimation Type");
+                            columns.Bound(p => p.Company).Filterable(false).Title("Company");
+                            columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
 
-                                           })
-                                           .NoRecords(false)
-                                           .ToolBar(toolbar =>
-                                           {
-                                               toolbar.ClientTemplate("<div class='row'><div class='col-xs-12 col-md-2'> <input type=button value='Sent All'  id='allInvitees' class='k-button' onclick='PostIDs()' />  </div><div class='col-xs-12 col-md-2'><a  id='selectedInvitees' class='k-button' href=''> Sent To Selected <span id='selectedCount' class='badge badge-pill badge-danger'></span> </a> </div>  <div class='col-xs-12 col-md-2'></div> <div class='col-xs-12 col-md-2'> <a id='newInvitee' class='k-button' href=''>Add New Invitee(s)</a></div>" +
-                                                   "<div class='col-xs-12 col-md-2'> <a  id='uploadInvitee' class='k-button' href=''> Import Invitees List </a>   </div> </div>");
-                                           })
-                                       .PersistSelection()
-                                       .Events(events => events.Change("onGridRowSelection"))
-                                       .Pageable()
-                                       .Sortable()
-                                       .Scrollable()
-                                       .AutoBind(false)
-                                       .Filterable()
-                                       .HtmlAttributes(new { style = "height:550px;" })
-                                       .DataSource(dataSource => dataSource
-                                       .Ajax()
-                                       .Model(model => model.Id(p => p.Id))
-                                       .ServerOperation(false)
-                                       .PageSize(50)
-                                       .Read(read => read.Action("ReadInvitees", "Invitee").Data("additionalData"))
+                        })
+                        .NoRecords(false)
+                        .ToolBar(toolbar =>
+                        {
+                            toolbar.ClientTemplate("<div class='row'><div class='col-xs-12 col-md-2'> <input type=button value='Sent All'  id='allInvitees' class='k-button' onclick='PostIDs()' />  </div><div class='col-xs-12 col-md-2'><a  id='selectedInvitees' class='k-button' href=''> Sent To Selected <span id='selectedCount' class='badge badge-pill badge-danger'></span> </a> </div>  <div class='col-xs-12 col-md-2'></div> <div class='col-xs-12 col-md-2'> <a id='newInvitee' class='k-button' href=''>Add New Invitee(s)</a></div>" +
+                                "<div class='col-xs-12 col-md-2'> <a  id='uploadInvitee' class='k-button' href=''> Import Invitees List </a>   </div> </div>");
+                        })
+                    .PersistSelection()
+                    .Events(events => events.Change("onGridRowSelection"))
+                    .Pageable()
+                    .Sortable()
+                    .Scrollable()
+                    .AutoBind(false)
+                    .Filterable()
+                    .HtmlAttributes(new { style = "height:550px;" })
+                    .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model => model.Id(p => p.Id))
+                    .ServerOperation(false)
+                    .PageSize(50)
+                    .Read(read => read.Action("ReadInvitees", "Invitee").Data("additionalData"))
 
-                                       )
+                    )
                 )
             </p>
         </div>

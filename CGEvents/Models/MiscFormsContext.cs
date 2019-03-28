@@ -495,13 +495,22 @@ namespace CGEvents.Models
 
             modelBuilder.Entity<IntimationTemplateMaster>(entity =>
             {
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Filename).HasMaxLength(500);
+                entity.Property(e => e.EventId).HasColumnName("EventID");
 
                 entity.Property(e => e.IntimationTypeId).HasColumnName("IntimationTypeID");
 
                 entity.Property(e => e.MergeFields).HasMaxLength(1000);
+
+                entity.Property(e => e.TemplateName).HasMaxLength(500);
+
+
+                entity.HasOne(d => d.Event)
+                    .WithMany(p => p.IntimationTemplateMaster)
+                    .HasForeignKey(d => d.EventId)
+                    .HasConstraintName("FK_IntimationTemplateMaster_EventMaster");
 
                 entity.HasOne(d => d.IntimationType)
                     .WithMany(p => p.IntimationTemplateMaster)

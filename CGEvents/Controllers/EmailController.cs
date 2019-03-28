@@ -49,12 +49,13 @@ namespace CGEvents.Controllers
             return Json(EventsDropDownList);
         }
 
+        
         public ActionResult GetTemplates()
         {
             //Save the date typeid==1
             var TemplatesDropDownList = _context.IntimationTemplateMaster.Where(typeid => typeid.IntimationTypeId==1).Select(e =>  new TemplateDropDownModel
             {
-                Filename = e.Filename,
+                Filename = e.TemplateName,
                 ID=e.Id
             });
             Console.Write(Json(TemplatesDropDownList));

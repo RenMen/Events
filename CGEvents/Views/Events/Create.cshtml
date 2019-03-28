@@ -9,6 +9,19 @@
 
 <h4>EventMaster</h4>
 <hr />
+<style>
+    .creative {
+        float: left;
+        position: relative;
+        margin: 0 10px 10px 0;
+        padding: 0;
+    }
+
+        .creative img {
+            width: 110px;
+            height: 110px;
+        }
+</style>
 <div class="row">
     <form method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -32,16 +45,16 @@
                     <label asp-for="EventDate" class="control-label d-block">Start Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDate")
-                                .Max(DateTime.Now.AddMonths(1))
-                                .Value("")
-                                .Events(y =>
-                                {
-                                    y.Change("startChange");
-                                    y.Open("startOpen");
+                                        .Max(DateTime.Now.AddMonths(1))
+                                        .Value("")
+                                        .Events(y =>
+                                        {
+                                            y.Change("startChange");
+                                            y.Open("startOpen");
 
-                                })
-                                .HtmlAttributes(new { style = "width: 100%" })
-                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                     )
 
@@ -54,15 +67,15 @@
                     <label asp-for="EventDateTo" class="control-label d-block ">End Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDateTo")
-                                .Value("")
-                                .Min(DateTime.Now.AddMonths(-1))
-                                .Events(y =>
-                                {
-                                    y.Change("endChange");
-                                    y.Open("endOpen");
-                                })
-                                .HtmlAttributes(new { style = "width: 100%" })
-                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                        .Value("")
+                                        .Min(DateTime.Now.AddMonths(-1))
+                                        .Events(y =>
+                                        {
+                                            y.Change("endChange");
+                                            y.Open("endOpen");
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
                     )
 
 
@@ -77,16 +90,16 @@
                         <label asp-for="FormDeadline" class="control-label d-block"></label>
 
                         @(Html.Kendo().DateTimePicker()
-                                .Name("FormDeadline")
-                                .Value("")
-                                .Min(DateTime.Now.AddMonths(-1))
-                                .Events(y =>
-                                {
-                                y.Change("dlChange");
-                                y.Open("dlOpen");
-                                })
-                                .HtmlAttributes(new { style = "width: 100%" })
-                                .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                        .Name("FormDeadline")
+                                        .Value("")
+                                        .Min(DateTime.Now.AddMonths(-1))
+                                        .Events(y =>
+                                        {
+                                            y.Change("dlChange");
+                                            y.Open("dlOpen");
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                         )
                         <span asp-validation-for="FormDeadline" class="text-danger"></span>
@@ -96,166 +109,43 @@
             </div>
         </div>
 
-
-        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-
-            <label asp-for="Subject" class="control-label">Subject Line</label>
-            <input asp-for="Subject" class="form-control" />
-            <span asp-validation-for="Subject" class="text-danger"></span>
-        </div>
-
-        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-            <label asp-for="MailHeader" class="control-label">Upload and Insert Creative</label>
-            @(Html.Kendo().Editor()
-            .Encoded(false)
-            .Name("MailHeader")
-            .HtmlAttributes(new { style = "height:350px" })
-            .Tools(tools => tools
-            .Clear()
-            .CreateLink().Unlink()
-            .InsertImage()
-            .InsertFile()
-            .TableEditing()
-            .ViewHtml()
-            .Print()
-            .FontName(fonts => fonts
-            .Add("Arial", "Arial")
-            .Add("Calibry", "Calibry")
-            .Add("Courier New", "Courier New")
-            .Add("Lucida Console", "Lucida Console")
-            .Add("Georgia", "Georgia")
-            .Add("Impact", "Impact")
-            .Add("Tohoma", "Tohoma")
-            .Add("Times New Roman", "Times New Roman")
-            .Add("Trebuchet", "Trebuchet")
-            .Add("Verdana", "Verdana")
-        )
-            )
-            .ImageBrowser(imageBrowser => imageBrowser
-                .Image("~/shared/UserFiles/Images/{0}")
-                .Read("Read", "ImageBrowser")
-                .Create("Create", "ImageBrowser")
-                .Destroy("Destroy", "ImageBrowser")
-                .Upload("Upload", "ImageBrowser")
-            )
-            .FileBrowser(fileBrowser => fileBrowser
-                .File("~/shared/UserFiles/Images/{0}")
-                .Read("Read", "FileBrowser")
-                .Create("Create", "FileBrowser")
-                .Destroy("Destroy", "FileBrowser")
-                .Upload("Upload", "FileBrowser")
-            )
-
-                .Value(@<text>
-            <partial name="_emailtemplate" />
-                                                                </text>)
-            )
-            <span asp-validation-for="MailHeader" class="text-danger"></span>
-
-        </div>
-
-
-        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-            <label asp-for="MailBody" class="control-label">Covering letter (If any)</label>
-            @(Html.Kendo().Editor()
-                                         .Encoded(false)
-                    .Name("MailBody")
-                    .HtmlAttributes(new { style = "height:200px" })
-                    .Tools(tools => tools
-                    .Clear()
-                    .Bold().Italic().Underline().Strikethrough()
-                    .JustifyLeft().JustifyCenter().JustifyRight().JustifyFull()
-                    .InsertUnorderedList().InsertOrderedList()
-                    .Outdent().Indent()
-                    .CreateLink().Unlink()
-                    .InsertImage()
-                    .InsertFile()
-                    .SubScript()
-                    .SuperScript()
-                    .TableEditing()
-                    .ViewHtml()
-                    .Formatting()
-                    .CleanFormatting()
-                    .FontName()
-                    .FontSize()
-                    .ForeColor().BackColor()
-                    .Print()
-                    .FontName(fonts => fonts
-                    .Add("Arial", "Arial")
-                    .Add("Calibry", "Calibry")
-                    .Add("Courier New", "Courier New")
-                    .Add("Lucida Console", "Lucida Console")
-                    .Add("Georgia", "Georgia")
-                    .Add("Impact", "Impact")
-                    .Add("Tohoma", "Tohoma")
-                    .Add("Times New Roman", "Times New Roman")
-                    .Add("Trebuchet", "Trebuchet")
-                    .Add("Verdana", "Verdana")
-                )
-                    )
-
-                .Value(@<text>
-
-                </text>)
-            )
-            <span asp-validation-for="MailBody" class="text-danger"></span>
-        </div>
-        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-            <label asp-for="MailSignature" class="control-label">Signature</label>
-            @(Html.Kendo().Editor()
-                        .Encoded(false)
-                        .Name("MailSignature")
-                        .HtmlAttributes(new { style = "height:200px" })
-                        .Tools(tools => tools
-                        .Clear()
-                        .Bold().Italic().Underline().Strikethrough()
-                        .CreateLink().Unlink()
-                        .ViewHtml()
-                        .Formatting()
-                        .CleanFormatting()
-                        .FontName()
-                        .FontSize()
-                        .ForeColor().BackColor()
-                        .FontName(fonts => fonts
-                        .Add("Arial", "Arial")
-                        .Add("Calibry", "Calibry")
-                        .Add("Courier New", "Courier New")
-                        .Add("Lucida Console", "Lucida Console")
-                        .Add("Georgia", "Georgia")
-                        .Add("Impact", "Impact")
-                        .Add("Tohoma", "Tohoma")
-                        .Add("Times New Roman", "Times New Roman")
-                        .Add("Trebuchet", "Trebuchet")
-                        .Add("Verdana", "Verdana")
-                    )
-                        .Snippets(snippets => snippets
-                        .Add("Walid Yared", "<p>Regards,<b><br /> <br />Walid Yared ," +
-                        "<br /> Chief Marketing Officer  </b>" +
-                        "<br /> Choueiri Group Building  " +
-                        "<br /> Media City, Knowledge Village " +
-                        "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
-                        "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
-                        "<br /> E - mail: <a href='mailto:wyared.mr@choueirigroup.com'> wyared.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")
-                        .Add("Paula", "<p>Regards,<b><br /><br /> Paula Beainy ," +
-                        "<br /> PA & Events Manager  </b>" +
-                        "<br /> Choueiri Group Building  " +
-                        "<br /> Media City, Knowledge Village " +
-                        "<br /> P.O.Box: 21816 - Dubai - U.A.E. " +
-                        "<br /> Tel:  +971 4 454 54 54 | Fax:  +971 4 454 54 44 " +
-                        "<br/> Mob: +971 52 6932733" +
-                        "<br /> E - mail: <a href='mailto:pbeainy.mr@choueirigroup.com'> pbeainy.mr@choueirigroup.com </a>| <a href = 'www.choueirigroup.com'> www.choueirigroup.com </a> </p>")))
-                        .Value(@<text>
-
-                    </text>)
-            )
-            <span asp-validation-for="MailSignature" class="text-danger"></span>
-        </div>
-
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
             <label asp-for="Venue" class="control-label"></label>
             <input asp-for="Venue" class="form-control" />
             <span asp-validation-for="Venue" class="text-danger"></span>
         </div>
+
+        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+            <script type="text/x-kendo-template" id="template">
+                <div class="product">
+                    <img src="../shared/web/foods/#= name #" alt="#: name # image" />
+                </div>
+            </script>
+
+
+            <label asp-for="MailSignature" class="control-label">Signature</label>
+            <h4 style="margin-top: 2em;">Upload Image</h4>
+            @(Html.Kendo().Upload()
+                            .Name("files-jpg")
+                            .Async(a => a
+                                .Save("Validation_Save", "Upload")
+                                .Remove("Validation_Remove", "Upload")
+                                .AutoUpload(true)
+                            )
+                            .Events(e => e.Success("onSuccess"))
+                            .Validation(validation => { validation.MaxFileSize(500); validation.AllowedExtensions(new string[] { ".gif", ".jpg", ".jpeg", ".png" }); })
+        )
+
+
+
+            <div class="demo-hint">You can only upload <strong>GIF</strong>, <strong>JPG</strong>, <strong>PNG</strong> files.</div>
+            <span asp-validation-for="MailSignature" class="text-danger"></span>
+
+            <div id="products"></div>
+
+        </div>
+
+
         <hr />
         <div class="form-group">
             <input type="submit" value="Create" class="btn btn-primary" />
@@ -272,7 +162,52 @@
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+
+
 <script>
+
+
+    $(function () {
+        var template = kendo.template($("#template").html());
+
+
+        $.getJSON('@Url.Action("/Upload/GetFilesInfo")', {
+            format: "json"
+        })
+            .done(function (data) {
+                var initialFiles = data;
+                $.each(data.items, function (i, item) {
+                    $("<img>").attr("src", item.media.m).appendTo("#images");
+                    if (i === 3) {
+                        return false;
+                    }
+                });
+            });
+
+        $("#creatives").html(kendo.render(template, initialFiles));
+    });
+
+
+    function onSuccess(e) {
+        if (e.operation == "upload") {
+            for (var i = 0; i < e.files.length; i++) {
+                var file = e.files[i].rawFile;
+
+                if (file) {
+                    var reader = new FileReader();
+
+                    reader.onloadend = function () {
+                        $("<div class='creative'><img src=" + this.result + " /></div>").appendTo($("#creatives"));
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    }
+
+
     function startChange() {
         var endPicker = $("#EventDateTo").data("kendoDateTimePicker"),
             startDate = this.value();

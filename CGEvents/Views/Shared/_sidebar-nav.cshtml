@@ -23,6 +23,24 @@
         </li>
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
+                <i class="nav-icon icon-event"></i> Mail Template
+            </a>
+            <ul class="nav-dropdown-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Email" asp-action="SaveTemplate" target="_top">
+                        <i class="nav-icon icon-pencil"></i> Create New
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Email" asp-action="EditTemplate" target="_top">
+                        <i class="nav-icon icon-arrow-up-circle"></i> Edit
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+        <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-people"></i> Invitee
             </a>
             <ul class="nav-dropdown-items">

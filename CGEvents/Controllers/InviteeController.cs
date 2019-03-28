@@ -63,7 +63,7 @@ namespace CGEvents.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendMessage([FromBody] int[] a)
+        public IActionResult SendMessage([FromBody] int[] SelectedInvitees)
         {
            //var IDs= Request.HttpContext.Items["IDs"];
             return View();

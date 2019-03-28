@@ -10,17 +10,37 @@ using System.Security.Principal;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
+
 namespace CGEvents.Controllers
 {
 
     public class EventsController : Controller
     {
         private readonly MiscFormsContext _context;
+        private readonly IFileProvider _fileProvider;
+        private readonly  IHostingEnvironment _hostingEnvironment;
 
-       
-        public EventsController(MiscFormsContext context)
+        public IDirectoryContents DirectoryContents { get; private set; }
+
+
+        class UploadInitialFile
+        {
+            public string filename { get; set; }
+            public long size { get; set; }
+           
+
+        }
+        
+
+
+
+        public EventsController(MiscFormsContext context, IFileProvider fileProvider, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _fileProvider = fileProvider;
+            _hostingEnvironment = hostingEnvironment;
 
         }
 
@@ -214,5 +234,7 @@ namespace CGEvents.Controllers
         {
             return _context.EventMaster.Any(e => e.EventId == id);
         }
+
+
     }
 }

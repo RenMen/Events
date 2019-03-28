@@ -8,6 +8,7 @@ namespace CGEvents.Models
         public EventMaster()
         {
             Ams = new HashSet<Ams>();
+            IntimationTemplateMaster = new HashSet<IntimationTemplateMaster>();
         }
 
         [Key]
@@ -44,6 +45,8 @@ namespace CGEvents.Models
         public string MailBody { get; set; }
         [Required(ErrorMessage = "Signature Required")]
         public string MailSignature { get; set; }
+
         public virtual ICollection<Ams> Ams { get; set; }
+        public virtual ICollection<IntimationTemplateMaster> IntimationTemplateMaster { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace CGEvents
         {
             Configuration = configuration;
             Environment = env;
-
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -51,8 +51,6 @@ namespace CGEvents
 
 
             //}
-
-
 
 
             //
@@ -104,6 +102,7 @@ namespace CGEvents
             }
             else
             {
+                
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -112,7 +111,7 @@ namespace CGEvents
             //DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
 
             //defaultFilesOptions.DefaultFileNames.Clear();
-
+            app.UsePathBase("/CgEvents");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             //   app.UseCookiePolicy();  need to remove 
@@ -120,7 +119,7 @@ namespace CGEvents
             //if (!env.IsDevelopment())
             //{
                 app.UseAuthentication();
-                // Register external authentication middleware
+            // Register external authentication middleware
             //}
 
            
