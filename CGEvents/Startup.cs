@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Microsoft.Extensions.FileProviders;
+using System.Reflection;
 
 namespace CGEvents
 {
@@ -28,7 +30,7 @@ namespace CGEvents
         {
             Configuration = configuration;
             Environment = env;
-            
+           
         }
 
         public IConfiguration Configuration { get; }
@@ -39,7 +41,16 @@ namespace CGEvents
             //if (!Environment.IsDevelopment())
             //{
 
-                services.Configure<CookiePolicyOptions>(options =>
+            #region snippet1
+            var physicalProvider = Environment.WebRootFileProvider;
+           
+            var compositeProvider =
+                new CompositeFileProvider(physicalProvider);
+
+            services.AddSingleton<IFileProvider>(compositeProvider);
+            #endregion
+
+            services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
@@ -69,7 +80,7 @@ namespace CGEvents
                 options.EnableForHttps = true;
             });
 
-
+          
             services
                .AddMvc(options =>
             {

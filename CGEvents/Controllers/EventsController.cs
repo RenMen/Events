@@ -19,7 +19,7 @@ namespace CGEvents.Controllers
     public class EventsController : Controller
     {
         private readonly MiscFormsContext _context;
-        private readonly IFileProvider _fileProvider;
+        private readonly   IFileProvider _fileProvider;
         private readonly  IHostingEnvironment _hostingEnvironment;
 
         public IDirectoryContents DirectoryContents { get; private set; }
@@ -54,7 +54,7 @@ namespace CGEvents.Controllers
            return _context.EventMaster                
                 .Select(eve =>
                        new EventMaster {EventId=eve.EventId, EventName = eve.EventName,EventDate=eve.EventDate,EventDateTo=eve.EventDateTo }).ToList();   //.Select(event => EventMa ).ToList();
-            
+               
             }
             catch ( Exception e) 
             {
@@ -235,6 +235,40 @@ namespace CGEvents.Controllers
             return _context.EventMaster.Any(e => e.EventId == id);
         }
 
+        public async Task<IActionResult> GetFilesInfo(int? eid)
+        {
+            IList<UploadInitialFile> initialFiles;
 
+            if (eid == null || eid == 0)
+            {
+                initialFiles = new List<UploadInitialFile>();
+            }
+            else
+            {
+                initialFiles = await GetAllInitialFiles(eid);
+            }
+            return Json(initialFiles);
+        }
+        private async Task<IList<UploadInitialFile>> GetAllInitialFiles(int? eid)
+        {
+           IList<UploadInitialFile> fileinfolist=new List<UploadInitialFile>();
+
+           // _fileProvider provider = new PhysicalFileProvider(path);
+          
+           //var contents = provider.GetDirectoryContents("");
+           
+            DirectoryContents = _fileProvider.GetDirectoryContents("\\shared\\UserFiles\\Images\\");
+
+            foreach (var file in DirectoryContents) 
+            {
+                
+                if (!file.IsDirectory)
+                {
+                   fileinfolist.Add(new UploadInitialFile { filename=file.Name,size=file.Length});
+                }
+            }
+
+           return fileinfolist;
+        }
     }
 }
