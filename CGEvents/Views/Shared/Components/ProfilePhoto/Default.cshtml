@@ -1,0 +1,16 @@
+﻿@addTagHelper *, CGEvents.Views.Shared.Components
+@using Newtonsoft.Json;
+@{
+    if (ViewData["Photo"] != null)
+    {
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <img class="img-avatar" src="data:image/jpeg;base64, @ViewData["Photo"]" alt="">
+        </a>
+    }
+    else
+    {
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <img class="img-avatar" src="" alt="">
+        </a>
+    }
+}

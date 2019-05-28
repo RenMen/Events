@@ -4,10 +4,12 @@
 @{
     ViewData["Title"] = "Create";
 }
+@{
+    ViewData["Title"] = "List Templates - " + ViewData["EventName"];
+    ViewData["Action"] = "Events";
+    ViewData["CurrentPage"] = "List Template";
+}
 
-<h1>Create</h1>
-
-<h4>EventMaster</h4>
 <hr />
 <style>
     .creative {
@@ -21,6 +23,7 @@
             width: 110px;
             height: 110px;
         }
+
     .creative {
         display: block;
         height: auto;
@@ -28,7 +31,7 @@
     }
 </style>
 <div class="row">
-    <form method="post">
+    <form method="post" style="width:100% !important">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
 
@@ -50,16 +53,16 @@
                     <label asp-for="EventDate" class="control-label d-block">Start Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDate")
-                                        .Max(DateTime.Now.AddMonths(1))
-                                        .Value("")
-                                        .Events(y =>
-                                        {
-                                            y.Change("startChange");
-                                            y.Open("startOpen");
+                                                        .Max(DateTime.Now.AddMonths(1))
+                                                        .Value("")
+                                                        .Events(y =>
+                                                        {
+                                                            y.Change("startChange");
+                                                            y.Open("startOpen");
 
-                                        })
-                                        .HtmlAttributes(new { style = "width: 100%" })
-                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                                        })
+                                                        .HtmlAttributes(new { style = "width: 100%" })
+                                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                     )
 
@@ -72,15 +75,15 @@
                     <label asp-for="EventDateTo" class="control-label d-block ">End Date and Time</label>
 
                     @(Html.Kendo().DateTimePicker().Name("EventDateTo")
-                                        .Value("")
-                                        .Min(DateTime.Now.AddMonths(-1))
-                                        .Events(y =>
-                                        {
-                                            y.Change("endChange");
-                                            y.Open("endOpen");
-                                        })
-                                        .HtmlAttributes(new { style = "width: 100%" })
-                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                                        .Value("")
+                                                        .Min(DateTime.Now.AddMonths(-1))
+                                                        .Events(y =>
+                                                        {
+                                                            y.Change("endChange");
+                                                            y.Open("endOpen");
+                                                        })
+                                                        .HtmlAttributes(new { style = "width: 100%" })
+                                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
                     )
 
 
@@ -95,16 +98,16 @@
                         <label asp-for="FormDeadline" class="control-label d-block"></label>
 
                         @(Html.Kendo().DateTimePicker()
-                                        .Name("FormDeadline")
-                                        .Value("")
-                                        .Min(DateTime.Now.AddMonths(-1))
-                                        .Events(y =>
-                                        {
-                                            y.Change("dlChange");
-                                            y.Open("dlOpen");
-                                        })
-                                        .HtmlAttributes(new { style = "width: 100%" })
-                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
+                                                        .Name("FormDeadline")
+                                                        .Value("")
+                                                        .Min(DateTime.Now.AddMonths(-1))
+                                                        .Events(y =>
+                                                        {
+                                                            y.Change("dlChange");
+                                                            y.Open("dlOpen");
+                                                        })
+                                                        .HtmlAttributes(new { style = "width: 100%" })
+                                                        .HtmlAttributes(new { onkeydown = "javascript:return false;" })
 
                         )
                         <span asp-validation-for="FormDeadline" class="text-danger"></span>
@@ -120,44 +123,59 @@
             <span asp-validation-for="Venue" class="text-danger"></span>
         </div>
 
+        @* below code to be used on template for upload control*@
+        @*<div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
+                <script type="text/x-kendo-template" id="template">
+                    <div class="creative">
+                        <img src="/shared/UserFiles/Images/#= filename #" alt="#: filename # image" />
+                    </div>
+                </script>
+                <label class="control-label">Upload Creative</label>
+                <div id="creatives"></div>
+                <h4 style="margin-top: 2em;">Upload Image</h4>
+                @(Html.Kendo().Upload()
+                                        .Name("files-jpg")
+                                        .Async(a => a
+                                            .Save("Validation_Save", "Upload")
+                                            .Remove("Validation_Remove", "Upload")
+                                            .AutoUpload(true)
+                                        )
+                                        .Events(e => e.Success("onSuccess"))
+                                        .Validation(validation => { validation.MaxFileSize(5000); validation.AllowedExtensions(new string[] { ".gif", ".jpg", ".jpeg", ".png" }); })
+                )
+
+
+
+                <div class="demo-hint">You can only upload <strong>GIF</strong>, <strong>JPG</strong>, <strong>PNG</strong> files.</div>
+                <span asp-validation-for="MailSignature" class="text-danger"></span>
+
+
+
+            </div>*@
+
+
+        <hr />
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-            <script type="text/x-kendo-template" id="template">
-                <div class="creative">
-                    <img src="/shared/UserFiles/Images/#= filename #" alt="#: filename # image" />
+            <div class="row ">
+                <div class="col-lg-4">
+                    <div class="float-lg-left">
+                        <input type="submit" value="Create" name="create" class="btn btn-primary" />
+                    </div>
                 </div>
-            </script>
-
-
-            <label class="control-label">Upload Creative</label>
-            <div id="creatives"></div>
-            <h4 style="margin-top: 2em;">Upload Image</h4>
-            @(Html.Kendo().Upload()
-                                    .Name("files-jpg")
-                                    .Async(a => a
-                                        .Save("Validation_Save", "Upload")
-                                        .Remove("Validation_Remove", "Upload")
-                                        .AutoUpload(true)
-                                    )
-                                    .Events(e => e.Success("onSuccess"))
-                                    .Validation(validation => { validation.MaxFileSize(5000); validation.AllowedExtensions(new string[] { ".gif", ".jpg", ".jpeg", ".png" }); })
-            )
-
-
-
-            <div class="demo-hint">You can only upload <strong>GIF</strong>, <strong>JPG</strong>, <strong>PNG</strong> files.</div>
-            <span asp-validation-for="MailSignature" class="text-danger"></span>
-
-
-
-        </div>
-
-
-        <hr />
-        <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
-        </div>
-        <hr />
-    </form>
+                <div class="col-lg-4">
+                    <div class="float-lg-none">
+                        <input type="submit" value="Import Data" name="import" class="btn btn-primary" />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="float-lg-right">
+                        <input type="submit" value="Next Step" name="template" class="btn btn-primary" />
+                    </div>
+                </div>
+                </div>
+            </div>
+            <hr />
+</form>
 </div>
 
 <div>
@@ -173,41 +191,21 @@
 
 <script>
 
-
-    $(function () {
+    //the bekow function to be used when creating template
+    @*$(function () {
         var template = kendo.template($("#template").html());
         var initialFiles;
-        
-        @*$.ajax({
-            url: '@Url.Action("GetFilesInfo","Events")',
-            type: "GET",
-            data: {eid:1},
-            dataType: 'application/json; charset=utf-8',
-            success: function (data) {
-                var initialFiles = data;
-                $("#creatives").html(kendo.render(template, initialFiles));
-            }
-        });*@
 
-
-
-
-        $.getJSON('@Url.Action("GetFilesInfo","Events")', {
+          $.getJSON('@Url.Action("GetFilesInfo","Events")', {
             eid: 1
         })
             .done(function (data) {
                 var initialFiles = data;
-                //$.each(data.items, function (i, item) {
-                //    $("<img>").attr("src", item.media.m).appendTo("#images");
-                //    if (i === 3) {
-                //        return false;
-                //    }
-                //});
                 $("#creatives").html(kendo.render(template, initialFiles));
             });
 
-       
-    });
+
+    });*@
 
 
     function onSuccess(e) {
@@ -232,15 +230,28 @@
     function startChange() {
         var endPicker = $("#EventDateTo").data("kendoDateTimePicker"),
             startDate = this.value();
+        endDate=endPicker.value();
         var dlPicker = $("#FormDeadline").data("kendoDateTimePicker");
+        dlDate = dlPicker.value();
 
 
         if (startDate) {
-            startDate = new Date(startDate);
-            startDate.setHours(startDate.getHours() + 1);
+            if (endDate) {
+                endPicker.value("");
+            }
+            if (dlDate) {
+                dlPicker.value("");
+            }
+
+                startDate = new Date(startDate);
+                dlDate = new Date(startDate);
+                startDate.setHours(startDate.getHours() + 1);
+                dlDate.setHours(dlDate.getHours() - 1);
             //startDate.setDate(startDate.getDate() + 1);
             endPicker.min(startDate);
-            dlPicker.min(startDate);
+            dlPicker.min(new Date());
+            dlPicker.max(dlDate);
+
         }
     }
 
@@ -253,8 +264,9 @@
             endDate = new Date(endDate);
             endDate.setHours(endDate.getHours() - 1);
             //endDate.setDate(endDate.getDate() - 1);
-            startPicker.max(endDate);
+           // startPicker.max(endDate);
             dlPicker.max(endDate);
+            dlPicker.value("");
         }
     }
 
@@ -266,7 +278,7 @@
             endDate = new Date(endDate);
             endDate.setHours(endDate.getHours() - 1);
             //endDate.setDate(endDate.getDate() - 1);
-            startPicker.max(endDate);
+           // startPicker.max(endDate);
         }
     }
         function startOpen() { }

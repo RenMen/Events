@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CGEvents.Models;
+using System.Diagnostics;
 namespace CGEvents.Controllers
 {
     public class EmailController : Controller
@@ -33,14 +34,28 @@ namespace CGEvents.Controllers
             public string IntimationGroupName { get; set; }
         }
 
-        public IActionResult Index()
+        public IActionResult Index(short? eid)
         {
+            ViewData["EventId"] = eid;
+            ViewData["EventName"] = GetEventName(eid);
             return View("SaveTheDate");
         }
+        public string GetEventName(short? eid)
+        {
+            if (eid == null)
+               {
+                //  return _context.Ams.Include(s=>s.Event).Where(w => w.EventId == eid).FirstOrDefault().Event.EventName;
+                return _context.EventMaster.FirstOrDefault().EventName;
+            }
+            else {
+                //  return _context.Ams.Include(s=>s.Event).Where(w => w.EventId == eid).FirstOrDefault().Event.EventName;
+                return _context.EventMaster.Where(w => w.EventId == eid).FirstOrDefault().EventName;
+            }
 
+        }
         public ActionResult GetEvents()
         {
-            var EventsDropDownList = _context.EventMaster.Where(id => id.EventDateTo >= DateTime.Today).Select(e => new EventDropDownModel
+            var EventsDropDownList = _context.EventMaster.Where(id => id.EventDate >= DateTime.Today).Select(e => new EventDropDownModel
             {
                 EventName = e.EventName,
                 EventId = e.EventId
@@ -52,13 +67,17 @@ namespace CGEvents.Controllers
         
         public ActionResult GetTemplates()
         {
+
+
             //Save the date typeid==1
-            var TemplatesDropDownList = _context.IntimationTemplateMaster.Where(typeid => typeid.IntimationTypeId==1).Select(e =>  new TemplateDropDownModel
+
+            var TemplatesDropDownList = _context.IntimationTemplateMaster.Where(typeid => typeid.IntimationTypeId == 1).Select(e => new TemplateDropDownModel
             {
                 Filename = e.TemplateName,
-                ID=e.Id
+                ID = e.Id
             });
-            Console.Write(Json(TemplatesDropDownList));
+
+            //Debug.WriteLine(Json(TemplatesDropDownList));
             return Json(TemplatesDropDownList);
         }
         public ActionResult GetFilter()

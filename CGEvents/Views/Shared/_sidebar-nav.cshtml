@@ -14,30 +14,37 @@
             </a>
             <ul class="nav-dropdown-items">
                 <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Create" target="_top">
+                        <i class="nav-icon  icon-control-start"></i> Create New
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index" target="_top">
                         <i class="nav-icon icon-pencil"></i> Add/Edit/List
+                        
                     </a>
                 </li>
 
             </ul>
-        </li>
+        </li>        
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon icon-event"></i> Mail Template
             </a>
-            <ul class="nav-dropdown-items">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Email" asp-action="SaveTemplate" target="_top">
-                        <i class="nav-icon icon-pencil"></i> Create New
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Email" asp-action="EditTemplate" target="_top">
-                        <i class="nav-icon icon-arrow-up-circle"></i> Edit
-                    </a>
-                </li>
+            @await Component.InvokeAsync("Menu_UpcomingEvents")
+            @*<ul class="nav-dropdown-items">
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Email" asp-action="SaveTemplate" target="_top">
+                    <i class="nav-icon icon-pencil"></i> Create New
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Email" asp-action="EditTemplate" target="_top">
+                    <i class="nav-icon icon-arrow-up-circle"></i> Edit
+                </a>
+            </li>
 
-            </ul>
+        </ul>*@
         </li>
         <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#">

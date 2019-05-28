@@ -3,39 +3,45 @@
 @{
     ViewData["Title"] = "Index";
 }
+@{
+    ViewData["Title"] = "List Events";
+    ViewData["Action"] = "Index";
+    ViewData["CurrentPage"] = "List Template";
+}
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h2>Index</h2>
+@*<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h2>Events</h2>
 
     <p>
         <a asp-action="Create">Create New Event</a>
     </p>
-</div>
+</div>*@
 <div class="table-responsive">
 
     @(Html.Kendo().Grid<CGEvents.Models.EventMaster>()
-                      .Name("grid")
-                          .Columns(columns =>
-                          {
-                          columns.Bound(p => p.EventName).Filterable(false);
-                          columns.Bound(p => p.Venue);
-                          columns.Bound(p => p.AckText);
-                          columns.Bound(p => p.EventId).Title("").ClientTemplate("<a href='" + Url.Action("Edit", "Events") + "/#=EventId#'><span class='btn btn-primary'>Edit</span></a> <a href='" + Url.Action("Index", "Invitee") + "?eid=#=EventId#'><span class='btn btn-primary'>Add Invitee(s)</span></a>");
-            //columns.Bound(p => p.AckText).Format("{0:MM/dd/yyyy}");
-
-        })
-
-                          .Pageable()
-                          .Sortable()
-                          .Scrollable()
-                          .Filterable()
-                          .HtmlAttributes(new { style = "height:550px;" })
-                          .DataSource(dataSource => dataSource
-                              .Ajax()                              
-                              .ServerOperation(false)
-                              .PageSize(20)
-                              .Read(read => read.Action("ReadEvents", "Events"))
-                          )
+                              .Name("grid")
+                                  .Columns(columns =>
+                                  {
+                                      columns.Bound(p => p.EventName).Filterable(false);
+                                      columns.Bound(p => p.EventDate).Format("{0:dd/MMM/yyyy}").Title("Date").Filterable(false);
+                                      columns.Bound(p => p.EventId).Title("Action").Filterable(false).ClientTemplate("<a href='" + Url.Action("Edit", "Events") + "/#=EventId#' alt='Edit Event Details' title='Edit Event Basic Details'><i class='nav-icon icon-book-open'></i></a> <i class='nav-icon icon-options-vertical'> <a href='" + Url.Action("index", "Templates") + "/#=EventId#' alt='Edit Mail Temmplates' title='Edit Mail Templates'><i class='nav-icon icon-puzzle'></i></a> <i class='nav-icon icon-options-vertical'> <a href='" + Url.Action("Index", "Invitee") + "?eid=#=EventId#' alt='Add Invitees' title='Add/Import Invitee(s)'><i class='nav-icon icon-user-follow'></i></a>");
+                          //columns.Bound(p => p.AckText).Format("{0:MM/dd/yyyy}");
+                      })
+                      .ToolBar(toolbar =>
+                                     {
+                                         toolbar.ClientTemplate("<div class='toolbar'> <a class='k-button' href='" + @Url.Action("Create", "Events") + "'>Add New Event</a></div>");
+                                     })
+                                  .Pageable()
+                                  .Sortable()
+                                  .Scrollable()
+                                  .Filterable()
+                                  .HtmlAttributes(new { style = "height:550px;" })
+                                  .DataSource(dataSource => dataSource
+                                      .Ajax()
+                                      .ServerOperation(false)
+                                      .PageSize(20)
+                                      .Read(read => read.Action("ReadEvents", "Events"))
+                                  )
     )
 </div>
 <script type="text/javascript">

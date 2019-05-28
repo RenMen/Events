@@ -29,6 +29,7 @@ namespace CGEvents.Models
         public virtual DbSet<IntimationLog> IntimationLog { get; set; }
         public virtual DbSet<IntimationTemplateMaster> IntimationTemplateMaster { get; set; }
         public virtual DbSet<IntimationTypeMaster> IntimationTypeMaster { get; set; }
+        public virtual DbSet<IntimationRawHTMLMaster> IntimationRawHTMLMaster { get; set; }
         public virtual DbSet<Neu> Neu { get; set; }
         public virtual DbSet<QuestionMaster> QuestionMaster { get; set; }
         public virtual DbSet<QuestionnaireDetails> QuestionnaireDetails { get; set; }
@@ -527,6 +528,16 @@ namespace CGEvents.Models
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.IntimationType).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<IntimationRawHTMLMaster>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+
+                entity.Property(e => e.ID)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.IntimationRawHTMLName).HasMaxLength(500);
             });
 
             modelBuilder.Entity<Neu>(entity =>

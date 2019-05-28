@@ -40,7 +40,7 @@ function onGridRowSelection(arg) {
 function additionalData(e) {
     var EventID = $("#Event").data("kendoDropDownList").value();
     var InvType = $("#Filter").data("kendoDropDownList").value();
-    if (InvType === '') { InvType = 0 }
+    if (InvType === '') { InvType = 0;}
 
     return { eid: EventID, InvTypeID: InvType }; // send the event id value as part of the Read request
 }
@@ -80,7 +80,7 @@ function onTemplateChange() {
  
 function onFilterChange() {
     var id = this.value();
-    var eid = $("#Event").data("kendoDropDownList").value()
+    var eid = $("#Event").data("kendoDropDownList").value();
     if (id !== '') {
         $("#grdInvitee").data('kendoGrid').wrapper.show();
         $("#newInvitee").attr('href', '/Invitee/Create?eid=' + eid);

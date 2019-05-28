@@ -79,15 +79,12 @@
         }
     });
 function onSuccess(e) {
-
-
     if (e.response.Content.includes('File not updated') || e.response.Content.includes('No Event Selected') || e.response.Content.includes('No files selected'))
     {
         $('#UploadStatusConsole').html(e.response.Content);
         e.preventDefault();
     }
     $('#UploadStatusConsole').html(e.response.Content);
-
     // $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
 };
 

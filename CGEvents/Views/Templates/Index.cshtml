@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CGEvents.Models.IntimationTemplateMaster>
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+@{
+    ViewData["Title"] = "List Templates - " + ViewData["EventName"];
+    ViewData["Action"] = "Events";   
+    ViewData["CurrentPage"] = "List Template";
+}
+
+<h3>Templates for - <b>@ViewData["EventName"]</b></h3>
+@*<a class='k-button' href='" + @Url.Action("Create", "Templates") + "?eid=" + ViewData["evtID"] + "'>Add New Invitee(s)</a>*@
+
+<div class="table-responsive">
+    <div class="alert-info" id="#dvData"></div>
+
+    @(Html.Kendo().Grid<CGEvents.Models.IntimationTemplateMaster>()
+                                 .Name("grdTemplateMaster")
+                                     .Columns(columns =>
+                                     {
+                                         columns.Bound(p => p.Event.EventName).Filterable(false).Title("Event Name");
+                                         columns.Bound(p => p.IntimationType.IntimationType).Filterable(false).Title("Template Type");
+                                         columns.Bound(p => p.TemplateName).Filterable(false).Title("Template Name");
+                                         columns.Bound(p => p.Subject).Filterable(false).Title("Subject");
+                                         columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Templates") + "/#=ID#'><span class='btn btn-primary'>Edit</span></a>");
+
+                                     })
+                                     .ToolBar(toolbar =>
+                                     {
+                                         toolbar.ClientTemplate("<div class='toolbar'> <a class='k-button' href='" + @Url.Action("Create", "Templates") + "/" + ViewData["EventId"] + "'>Add New Template</a></div>");
+                                     })
+                                 .Pageable()
+                                 .Sortable()
+                                 .Scrollable()
+                                 .Filterable()
+                                 .HtmlAttributes(new { style = "height:550px;" })
+                                 .DataSource(dataSource => dataSource
+                                 .Ajax()
+                                 .ServerOperation(false)
+                                 .PageSize(20)
+                                 .Read(read => read.Action("ReadTemplates", "Templates").Data("getUrlParameter"))
+
+                                 )
+
+
+    )
+</div>
+<script>
+    function getUrlParameter() {
+
+        /**/
+        var results = @ViewData["EventId"];
+/**/
+
+    if (results === null) {
+        document.location.href = "/Templates/Index/0";
+    }
+    else {
+        results = results === null ? { evtid: null } : { evtid: results };
+        return results;
+    }
+};
+</script>

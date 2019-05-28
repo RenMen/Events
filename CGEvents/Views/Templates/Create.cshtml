@@ -1,0 +1,220 @@
+﻿@model CGEvents.Models.IntimationTemplateMaster
+
+@{
+    ViewData["Title"] = "Create Template - " + ViewData["EventName"];
+    ViewData["Action"] = "Index";
+    ViewData["EventIdB"] = ViewData["EventId"];
+    ViewData["EventName"] = ViewData["EventName"];
+    ViewData["CurrentPage"] = "Create Template";
+}
+
+<h5>Compose Template - @ViewData["EventName"]</h5>
+
+<style>
+    .row {
+        padding: 10px 0 0px 0;
+    }
+</style>
+<form method="post">
+    <div class="table-responsive">
+        <div class="card border-info mb-3">
+            @*<div id="eventSelection" class="card-header">Select an event</div>*@
+            <div class="card-body text-info">
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        @(Html.Kendo().DropDownList()
+                                        .Name("IntimationTypeID")
+                                        .DataTextField("IntimationType")
+                                        .DataValueField("IntimationTypeId")
+                                        .OptionLabel("Select Type ...")
+                                        .Events(e => e.Change("onEventChange"))
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetTemplateTypes", "Templates");
+                                            });
+                                        })
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                        )
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        @(Html.Kendo().DropDownList()
+                                        .Name("HTMLTemplate")
+                                        .DataTextField("IntimationRawHTMLName")
+                                        .DataValueField("ID")
+                                        .OptionLabel("Select Mail Template ...")
+                                        .Events(e => e.Change("onTemplateChange"))
+                                        //.DataSource(source =>
+                                        //{
+                                        //    source.Read(read =>
+                                        //    {
+                                        //        read.Action("GetRawHTMLTemplateNames", "Templates");
+                                        //    });
+                                        //})
+                                        .HtmlAttributes(new { style = "width: 100%" })
+                        )
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-group">
+                            @*<label asp-for="Subject" class="control-label">Subject Line</label>*@
+                            <input asp-for="Subject" class="form-control" placeholder="Subject" style="display:none" />
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-group">
+                            @*<label asp-for="Subject" class="control-label">Subject Line</label>*@
+                            <input asp-for="TemplateName" class="form-control" placeholder="Template Name" style="display:none" />
+                            <span asp-validation-for="TemplateName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p class="card-text">
+                            @(Html.Kendo().Editor()
+                                            .Encoded(false)
+                                            .Name("HtmlContent")
+                                            .HtmlAttributes(new { style = "height:600px;" })
+                                            .Tools(tools => tools
+                                            .Clear()
+                                            .CreateLink().Unlink()
+                                            .InsertImage()
+                                            .InsertFile()
+                                            .TableEditing()
+                                            .ViewHtml()
+                                            .Print()
+                                            .FontName(fonts => fonts
+                                            .Add("Arial", "Arial")
+                                            .Add("Calibry", "Calibry")
+                                            .Add("Courier New", "Courier New")
+                                            .Add("Lucida Console", "Lucida Console")
+                                            .Add("Georgia", "Georgia")
+                                            .Add("Impact", "Impact")
+                                            .Add("Tohoma", "Tohoma")
+                                            .Add("Times New Roman", "Times New Roman")
+                                            .Add("Trebuchet", "Trebuchet")
+                                            .Add("Verdana", "Verdana")
+                                        )
+                                            )
+
+                                            .ImageBrowser(imageBrowser => imageBrowser
+                                                .Image("~/shared/UserFiles/Images/{0}")
+                                                .Read("Read", "ImageBrowser")
+                                                .Create("Create", "ImageBrowser")
+                                                .Destroy("Destroy", "ImageBrowser")
+                                                .Upload("Upload", "ImageBrowser")
+                                            )
+                                            .FileBrowser(fileBrowser => fileBrowser
+                                                .File("~/shared/UserFiles/Images/{0}")
+                                                .Read("Read", "FileBrowser")
+                                                .Create("Create", "FileBrowser")
+                                                .Destroy("Destroy", "FileBrowser")
+                                                .Upload("Upload", "FileBrowser")
+                                            )
+
+                                            .Value(@<text>
+                                            </text>)
+                            )
+                            <span asp-validation-for="HtmlContent" class="text-danger"></span>
+
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+
+    </div>
+</form>
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+
+    // A $( document ).ready() block.
+
+    //to remove default style sheet for editor. Other wise email template will not display properly
+    //https://docs.telerik.com/kendo-ui/controls/editors/editor/overview
+    $(document).ready(function () {
+
+        var editor = $("#HtmlContent").data("kendoEditor");
+        var styleTag = editor.body.parentNode.getElementsByTagName("style")[0];
+        styleTag.parentNode.removeChild(styleTag);
+
+
+        $("#HTMLTemplate").data("kendoDropDownList").wrapper.hide();// call for hide kendo dropdown call
+        $("#HtmlContent").data("kendoEditor").wrapper.hide();
+
+    });
+
+
+    function onEventChange() {
+        var IntimationTypeId = this.value();
+        if (IntimationTypeId === '') {
+            IntimationTypeId = null;
+        }
+        // $("#newInvitee").attr('href', '/Invitee/Create?eid=null');
+        // $("#uploadInvitee").attr('href', '/Upload?eid=null');
+
+        // reset the select of related dropdownlist and hide
+
+        $.ajax({
+            method: "GET",
+            url: "/Templates/GetRawHTMLTemplateNames",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { id: IntimationTypeId }, //JSON.stringify({dataItem })
+        }).done(function (data) {
+            var Filterdropdownlist = $("#HTMLTemplate").data("kendoDropDownList");
+            Filterdropdownlist.text(Filterdropdownlist.options.optionLabel);
+            Filterdropdownlist._oldIndex = 0;
+            Filterdropdownlist.wrapper.show();
+            $("#HTMLTemplate").data("kendoDropDownList").setDataSource(data);
+        });
+
+
+    }
+
+
+    function onTemplateChange() {
+        var tid = this.value();
+        if (tid !== '') {
+
+            $.ajax({
+                method: "GET",
+                url: "/Templates/GetRawHTML",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { id: tid }
+            }).done(function (data) {
+                $("#HtmlContent").data("kendoEditor").wrapper.show();
+                $("#HtmlContent").data("kendoEditor").value(data[0].IntimationRawHTML);
+                $("#Subject").show();
+                $("#TemplateName").show();
+
+            }).fail(function () {
+                alert("error");
+            });
+            //data.IntimationRawHTML
+        }
+    }
+
+
+
+</script>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

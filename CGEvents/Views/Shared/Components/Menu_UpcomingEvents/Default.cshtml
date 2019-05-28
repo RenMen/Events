@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CGEvents.Views.Shared.Components.Menu_UpcomingEvents.Events>
+@addTagHelper *, CGEvents.Views.Shared.Components
+<ul class="nav-dropdown-items">
+
+    @foreach (var eventItem in Model)
+    {
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Templates" asp-action="Index" asp-route-id ="@eventItem.EventID" target="_top">
+             <i class="nav-icon icon-pencil"></i> @eventItem.EventName
+        </a>
+    </li>
+
+    }
+
+
+</ul>

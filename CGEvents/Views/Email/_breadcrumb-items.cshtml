@@ -1,0 +1,21 @@
+﻿
+
+@if (@ViewData["EventIdB"] != null)
+{
+    <li class="breadcrumb-item">Home</li>
+    <li class="breadcrumb-item">Events</li>
+    <li class="breadcrumb-item">
+        <a asp-action=@ViewData["Action"]  asp-route-eid=@ViewData["EventIdB"]>@ViewData["EventName"]</a>
+    </li>
+    <li class="breadcrumb-item active">@ViewData["CurrentPage"]</li>
+}
+else
+{
+    <li class="breadcrumb-item">Home</li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller=@ViewData["Action"]>Events</a>
+    </li>
+    <li class="breadcrumb-item active">@ViewData["CurrentPage"]</li>
+}
+
+

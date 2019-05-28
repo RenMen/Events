@@ -37,15 +37,13 @@ namespace CGEvents.Models
         [Required(ErrorMessage = "Event End Date Required")]
         public DateTime? EventDateTo { get; set; }
         public string EventAgendaUrl { get; set; }
-        [Required(ErrorMessage = "Subject Required")]
         public string Subject { get; set; }
-        [Required(ErrorMessage = "Creative Required")]
+        //[Required(ErrorMessage = "Creative Required")]
         public string MailHeader { get; set; }
-        [Required(ErrorMessage = "Body Text Required")]
+       // [Required(ErrorMessage = "Body Text Required")]
         public string MailBody { get; set; }
-        [Required(ErrorMessage = "Signature Required")]
+       // [Required(ErrorMessage = "Signature Required")]
         public string MailSignature { get; set; }
-
         public virtual ICollection<Ams> Ams { get; set; }
         public virtual ICollection<IntimationTemplateMaster> IntimationTemplateMaster { get; set; }
     }

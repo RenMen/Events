@@ -100,12 +100,26 @@ namespace CGEvents.Controllers
             }
         }
         // GET: EventMasters
-        public IActionResult Index()
+        public IActionResult Index(int? id )
         {
-            return View();                    
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
+            //else
+            //{                
+            //    ViewData["EventName"] = getEventName(id);
+            //    return View();
+            //}
+            return View();
 
         }
-        
+
+        public string getEventName(int? eid)
+        {
+            return _context.EventMaster.Where(e => e.EventId == eid).Select(e => e.EventName).FirstOrDefault();
+
+        }
 
         // GET: EventMasters/Details/5
         public async Task<IActionResult> Details(short? id)
@@ -136,14 +150,23 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster)
+        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster,string create,string template)
         {
+           
             if (ModelState.IsValid)
             {
                 eventMaster.IsActive = true; //eventMaster.NullableBooleanPropertyProxy;
                 _context.Add(eventMaster);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (create != null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else if (template!=null)
+                        {
+                    return RedirectToAction("Index", "Templates", new {id = eventMaster.EventId} );
+                }
+                
             }
             return View(eventMaster);
         }

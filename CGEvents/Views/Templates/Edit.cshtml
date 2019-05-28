@@ -1,0 +1,117 @@
+﻿@model CGEvents.Models.IntimationTemplateMaster
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+@{
+    ViewData["Title"] = "Edit Templates - " + ViewData["EventName"];
+    ViewData["Action"] = "Index";
+    ViewData["EventIdB"] = ViewData["EventId"];
+    ViewData["EventName"] = ViewData["EventName"];
+    ViewData["CurrentPage"] = "Edit Template";
+}
+
+<h5>Compose Template - @ViewData["EventName"]</h5>
+<style>
+    .row {
+        padding: 10px 0 0px 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="form-group">
+                @*<label asp-for="Subject" class="control-label">Subject Line</label>*@
+                <input asp-for="Subject" class="form-control" placeholder="Subject" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="form-group">
+                @*<label asp-for="Subject" class="control-label">Subject Line</label>*@
+                <input asp-for="TemplateName" class="form-control" placeholder="Template Name" />
+                <span asp-validation-for="TemplateName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            
+                @(Html.Kendo().Editor()
+                        .Encoded(false)
+                        .Name("HtmlContent")
+                        .HtmlAttributes(new { style = "height:600px;" })
+                        .Tools(tools => tools
+                        .Clear()
+                        .CreateLink().Unlink()
+                        .InsertImage()
+                        .InsertFile()
+                        .TableEditing()
+                        .ViewHtml()
+                        .Print()
+                        .FontName(fonts => fonts
+                        .Add("Arial", "Arial")
+                        .Add("Calibry", "Calibry")
+                        .Add("Courier New", "Courier New")
+                        .Add("Lucida Console", "Lucida Console")
+                        .Add("Georgia", "Georgia")
+                        .Add("Impact", "Impact")
+                        .Add("Tohoma", "Tohoma")
+                        .Add("Times New Roman", "Times New Roman")
+                        .Add("Trebuchet", "Trebuchet")
+                        .Add("Verdana", "Verdana")
+                    )
+                        )
+
+                        .ImageBrowser(imageBrowser => imageBrowser
+                            .Image("~/shared/UserFiles/Images/{0}")
+                            .Read("Read", "ImageBrowser")
+                            .Create("Create", "ImageBrowser")
+                            .Destroy("Destroy", "ImageBrowser")
+                            .Upload("Upload", "ImageBrowser")
+                        )
+                        .FileBrowser(fileBrowser => fileBrowser
+                            .File("~/shared/UserFiles/Images/{0}")
+                            .Read("Read", "FileBrowser")
+                            .Create("Create", "FileBrowser")
+                            .Destroy("Destroy", "FileBrowser")
+                            .Upload("Upload", "FileBrowser")
+                        )
+
+                        .Value(@<text>
+                        </text>)
+                )
+                <span asp-validation-for="HtmlContent" class="text-danger"></span>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <input asp-for="EventId" type="hidden" />
+                <input asp-for="IntimationTypeId" type="hidden" />
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+
+    // A $( document ).ready() block.
+
+    //to remove default style sheet for editor. Other wise email template will not display properly
+    //https://docs.telerik.com/kendo-ui/controls/editors/editor/overview
+    $(document).ready(function () {
+
+        var editor = $("#HtmlContent").data("kendoEditor");
+        var styleTag = editor.body.parentNode.getElementsByTagName("style")[0];
+        styleTag.parentNode.removeChild(styleTag);
+
+    });
+
+</script>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

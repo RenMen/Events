@@ -1,4 +1,4 @@
-﻿@using System.Security.Principal
+﻿@using Microsoft.Identity.Web
 
 <header class="app-header navbar">
     <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
@@ -35,7 +35,8 @@
         </li>
 
         <li class="nav-item d-md-down-none">
-            <span class="nav-text text-dark">Hello  @User.Claims.Single(a => a.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value!</span>
+            @await Component.InvokeAsync("ProfileProperties")
+            @*<span class="nav-text text-dark">Hello  @User.Identity.Name!</span>*@
         </li>
 
         <li class="nav-item d-md-down-none">

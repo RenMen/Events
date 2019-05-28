@@ -1,12 +1,11 @@
 ﻿@using CGEvents.Models;
 @{
-    ViewData["Title"] = "Save The Date";
+    ViewData["Title"] = "Save the Date - " + ViewData["EventName"];
+    ViewData["Action"] = "Events";
+    ViewData["EventIdB"] = ViewData["EventId"];
+    ViewData["CurrentPage"] = "'" + ViewData["EventName"] + "'" + " - Invitees Details";
 
 }
-
-<h1>Save The Date @ViewData["EventId"]</h1>
-
-
 <div class="table-responsive">
     <div class="card border-info mb-3" style="max-width: 100%;">
         @*<div id="eventSelection" class="card-header">Select an event</div>*@
@@ -28,8 +27,6 @@
                     .HtmlAttributes(new { style = "width: 100%" })
                 )
             </p>
-
-
 
             <p class="card-text">
                 @(Html.Kendo().DropDownList()
@@ -117,7 +114,7 @@
     </div>
 </div>
 
-<script src= "~/SiteJS/SiteJS.js"></script>
+<script src="~/SiteJS/SiteJS.js"></script>
 
 <style>
     /*.toolbar {
