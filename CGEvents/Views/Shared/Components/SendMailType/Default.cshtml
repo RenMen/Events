@@ -1,0 +1,18 @@
+﻿@model IEnumerable<CGEvents.Views.Shared.Components.SendMailType.IntimationTypes>
+@addTagHelper *, CGEvents.Views.Shared.Components
+
+<a class="nav-link nav-dropdown-toggle" href="#">
+    <i class="nav-icon icon-envelope"></i> Sent Email
+</a>
+<ul class="nav-dropdown-items">
+
+    @foreach (var IntimationItem in Model)
+    {       
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Email" asp-action="Index" asp-route-typeid="@IntimationItem.IntimationTypeID" target="_top">
+                <i class="@IntimationItem.IntimationIconClass"></i> @IntimationItem.IntimationType
+            </a>
+        </li>
+    }
+
+</ul>

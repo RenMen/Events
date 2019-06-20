@@ -10,7 +10,8 @@ using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace CGEvents.Controllers
 {
@@ -43,8 +44,6 @@ namespace CGEvents.Controllers
             return View();
         }
 
-
-
         //This class is used to limit sql column on both tables. see the sql profiler
         public class InviteeWithEventDetils
         {
@@ -60,13 +59,45 @@ namespace CGEvents.Controllers
             public DateTime? EventDateTo { get; set; }
             public DateTime? EventDate { get; set; }
             public byte? InvTypeID { get; set; }
+            public DateTime? IndvDeadline { get; set; }
         }
 
         [HttpPost]
         public IActionResult SendMessage([FromBody] int[] SelectedInvitees)
         {
-           //var IDs= Request.HttpContext.Items["IDs"];
-            return View();
+            //var a = User.Identities.;
+
+
+
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Choueiri Group Greetings", "greetings@choueirigroup.com"));
+            message.To.Add(new MailboxAddress("Ren", "ren.men.in@gmail.com"));
+            message.Subject = "How you doin'?";
+
+            message.Body = new TextPart("plain")
+            {
+                Text = @"dsfgdsf"
+            };
+
+            using (var client = new SmtpClient())
+            {
+                // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                client.Connect("10.1.2.101", 25, false);
+
+                // Note: only needed if the SMTP server requires authentication
+                client.Authenticate("paula11311", "Pb2009?!");
+
+                client.Send(message);
+                client.Disconnect(true);
+            }
+
+
+
+            //var IDs= Request.HttpContext.Items["IDs"];
+            return Ok();
         }
 
         private IEnumerable<InviteeWithEventDetils> GetInvitee(int? id)
@@ -114,6 +145,7 @@ namespace CGEvents.Controllers
                                      Company = eve.ams.Company,
                                      EmailId = eve.ams.EmailId,
                                      EventGroupID = eve.ams.EventGroupId,
+                                     IndvDeadline=eve.ams.IndvDeadline,
                                     // InvTypeID=intimation.IntimationTypeId
                                  }
                            );
@@ -135,7 +167,8 @@ namespace CGEvents.Controllers
                                Company = eve.Company,
                                EmailId = eve.EmailId,
                                EventGroupID = eve.EventGroupId,
-                              // InvTypeID = InvTypeID
+                               IndvDeadline = eve.IndvDeadline,
+                               // InvTypeID = InvTypeID
                            });  
             }
         }

@@ -33,12 +33,12 @@ namespace CGEvents.Controllers
             public short IntimationGroupID { get; set; }
             public string IntimationGroupName { get; set; }
         }
-
-        public IActionResult Index(short? eid)
-        {
-            ViewData["EventId"] = eid;
-            ViewData["EventName"] = GetEventName(eid);
-            return View("SaveTheDate");
+        [HttpGet]
+        [Route("Email/{TypeID}")]
+        public IActionResult Index(int typeid)
+        {            
+            ViewData["TypeId"] = typeid;
+            return View();
         }
         public string GetEventName(short? eid)
         {
@@ -64,14 +64,13 @@ namespace CGEvents.Controllers
             return Json(EventsDropDownList);
         }
 
-        
-        public ActionResult GetTemplates()
-        {
 
+        public ActionResult GetTemplates(int typeID)
+        {
 
             //Save the date typeid==1
 
-            var TemplatesDropDownList = _context.IntimationTemplateMaster.Where(typeid => typeid.IntimationTypeId == 1).Select(e => new TemplateDropDownModel
+            var TemplatesDropDownList = _context.IntimationTemplateMaster.Where(typeid => typeid.IntimationTypeId == typeID).Select(e => new TemplateDropDownModel
             {
                 Filename = e.TemplateName,
                 ID = e.Id

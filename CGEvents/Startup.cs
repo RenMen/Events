@@ -12,13 +12,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
-
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Client.TokenCacheProviders;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using WebApp_OpenIDConnect_DotNet.Services;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Server.IIS;
 
 namespace CGEvents
 {
@@ -72,6 +72,10 @@ namespace CGEvents
             services.AddAzureAdV2Authentication(Configuration)
                     .AddMsal(new string[] { Constants.ScopeUserRead })
                     .AddInMemoryTokenCaches();
+
+
+            //services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
+            //services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
 
             // Add Graph
             services.AddGraphService(Configuration);
@@ -133,7 +137,7 @@ namespace CGEvents
             //DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
 
             //defaultFilesOptions.DefaultFileNames.Clear();
-            app.UsePathBase("/CgEvents");
+            app.UsePathBase("/CGEvent");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             //   app.UseCookiePolicy();  need to remove 
@@ -143,8 +147,6 @@ namespace CGEvents
             app.UseAuthentication();
             // Register external authentication middleware
             //}
-
-
 
             app.UseResponseCompression();
             app.UseResponseCompression();
@@ -156,7 +158,6 @@ namespace CGEvents
                     name: null,
                     template: "{controller}/{action}");
             });
-
 
             app.UseMvc(routes =>
             {

@@ -66,28 +66,29 @@
         </li>
 
         <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="#">
-                <i class="nav-icon icon-envelope"></i> Sent Email
-            </a>
-            <ul class="nav-dropdown-items">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Email" asp-action="Index" target="_top">
-                        <i class="nav-icon icon-calendar"></i> Save the Date
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="" asp-action="Index" target="_top">
-                        <i class="nav-icon icon-envelope-letter"></i> Invitation
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="" asp-action="Index" target="_top">
-                        <i class="nav-icon icon-speech"></i> General
-                    </a>
-                </li>
+            @await Component.InvokeAsync("SendMailType")
+            @*<a class="nav-link nav-dropdown-toggle" href="#">
+            <i class="nav-icon icon-envelope"></i> Sent Email
+        </a>
+        <ul class="nav-dropdown-items">
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Email" asp-action="Index" target="_top">
+                    <i class="nav-icon icon-calendar"></i> Save the Date
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="" asp-action="Index" target="_top">
+                    <i class="nav-icon icon-envelope-letter"></i> Invitation
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="" asp-action="Index" target="_top">
+                    <i class="nav-icon icon-speech"></i> General
+                </a>
+            </li>
 
 
-            </ul>
+        </ul>*@
         </li>
 
 

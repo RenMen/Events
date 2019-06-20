@@ -1,18 +1,17 @@
 ﻿@model CGEvents.Models.EventMaster
 
 @{
-    ViewData["Title"] = "Edit";
-}
-@{
-    ViewData["Title"] = "Modify - " + ViewData["EventName"];
+    ViewData["Title"] = "Edit Basic Details - " + ViewData["EventName"];
     ViewData["Action"] = "Events";
     ViewData["CurrentPage"] = "List Template";
 }
 
-<h4> @ViewData["Title"]</h4>
+<h1>Edit</h1>
+
+<h4>EventMaster</h4>
 <hr />
 <div class="row">
-    <form method="post" style="width:100% !important">
+    <form method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="EventId" />
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
@@ -93,14 +92,6 @@
                     <span asp-validation-for="FormDeadline" class="text-danger"></span>
                 </div>
             </div>
-        </div>
-
-
-        <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">
-
-            <label asp-for="Subject" class="control-label">Subject Line</label>
-            <input asp-for="Subject" class="form-control" />
-            <span asp-validation-for="Subject" class="text-danger"></span>
         </div>
 
         <div class="form-group shadow-lg p-3 mb-3 bg-white rounded-CG">

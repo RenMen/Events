@@ -15,6 +15,7 @@ namespace CGEvents.Models
        
         public byte IntimationTypeId { get; set; }
         public string IntimationType { get; set; }
+        public string IntimationIconClass { get; set; }
 
         public virtual ICollection<IntimationGroupTypeAssociation> IntimationGroupTypeAssociation { get; set; }
         public virtual ICollection<IntimationLog> IntimationLog { get; set; }

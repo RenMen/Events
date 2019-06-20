@@ -52,33 +52,32 @@
                     </text>)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 )
                 )
-
-               
-
-                <div class="box">
-
+                 <div class="box">
                         @*<h4>Console log</h4>*@
                         <div class="console" id="UploadStatusConsole"></div>
-                    </div>
+                 </div>
             </p>
         </div>
     </div>
 </div>
 
 <script>
-
     //$dropdownlist.data("kendoDropDownList").select(2);
-    $(function () {
+    $(function ()
+    {
         var dropdownlist = $("#Event").data("kendoDropDownList");
-        var eid = @ViewData["EventId"];
-        if (eid != null) {
-           
-            dropdownlist.value(@ViewData["EventId"]);
+        var eid=@Html.Raw(Json.Serialize(ViewData["EventId"]));
+
+        if (eid != null)
+        {
+            dropdownlist.value(eid);
             dropdownlist.enable(false);
             $("#eventSelection").html("Event Name");
         }
     });
-function onSuccess(e) {
+
+    function onSuccess(e)
+    {
     if (e.response.Content.includes('File not updated') || e.response.Content.includes('No Event Selected') || e.response.Content.includes('No files selected'))
     {
         $('#UploadStatusConsole').html(e.response.Content);
@@ -86,13 +85,12 @@ function onSuccess(e) {
     }
     $('#UploadStatusConsole').html(e.response.Content);
     // $('#UploadStatusConsole').append(e.XMLHttpRequest.status);
-};
+    };
 
-function onSelect(e) {
+    function onSelect(e)
+    {
     var uploadWidget = $("#files").getKendoUpload();
     uploadWidget.clearAllFiles();
     $('#UploadStatusConsole').html('');
-};
-
-
+    };
 </script>

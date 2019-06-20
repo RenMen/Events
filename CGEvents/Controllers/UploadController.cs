@@ -58,6 +58,9 @@ namespace CGEvents.Controllers
                 ViewData["EventId"] = eid;
                 ViewData["EventName"] = GetEventName(eid);
             }
+            else {
+                ViewData["EventId"] = null;
+            }
 
             return View();
         }

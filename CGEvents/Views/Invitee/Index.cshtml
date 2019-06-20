@@ -29,7 +29,7 @@
                          columns.Bound(p => p.EmailId).Filterable(false).Title("Email ID");
                          columns.Bound(p => p.Position).Filterable(false).Title("Position");
                          columns.Bound(p => p.Company).Filterable(false).Title("Company");
-                         columns.Bound(p => p.IndvDeadline).Filterable(false).Title("Deadline");
+                         columns.Bound(p => p.IndvDeadline).Format("{0:dd/MMM/yyyy hh:mm tt}").Filterable(false).Title("Deadline");
                          columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Invitee") + "/#=Id#'><span class='btn btn-primary'>Edit</span></a>");
 
                      })

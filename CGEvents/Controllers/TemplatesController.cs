@@ -64,20 +64,16 @@ namespace CGEvents.Controllers
             }
         }
 
-
         public async Task<IActionResult> ReadTemplates([DataSourceRequest] DataSourceRequest request, int? evtid)
         {
-           
-
+         
             if (evtid == null )
             {
                 return NotFound();
             }
             else if (evtid != null )
-            {
-               
+            {               
                 return Json(await GetTemplates(evtid).ToDataSourceResultAsync(request)); ;
-
             }
               else
             {
@@ -136,8 +132,8 @@ namespace CGEvents.Controllers
             return _context.EventMaster.Where(e => e.EventId == eid).Select(e => e.EventName).FirstOrDefault();
              
         }
-       // [HttpGet]
-       // [Route("Templates/Create/{EventID}")]
+        [HttpGet]
+        [Route("Templates/Create/{EventID}")]
         // GET: Templates/Create
         public IActionResult Create(int? EventID)
         {
@@ -169,7 +165,6 @@ namespace CGEvents.Controllers
 
             return Json(TemplatesHTML);
         }
-
 
         public ActionResult GetRawHTML(int id)
         {

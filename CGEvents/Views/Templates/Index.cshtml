@@ -24,12 +24,12 @@
                                          columns.Bound(p => p.IntimationType.IntimationType).Filterable(false).Title("Template Type");
                                          columns.Bound(p => p.TemplateName).Filterable(false).Title("Template Name");
                                          columns.Bound(p => p.Subject).Filterable(false).Title("Subject");
-                                         columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + Url.Action("Edit", "Templates") + "/#=ID#'><span class='btn btn-primary'>Edit</span></a>");
+                                         columns.Bound(p => p.Id).Title(" ").ClientTemplate("<a href='" + @Url.Action("Edit", "Templates") + "/#=ID#'><span class='btn btn-primary'>Edit</span></a>");
 
                                      })
                                      .ToolBar(toolbar =>
                                      {
-                                         toolbar.ClientTemplate("<div class='toolbar'> <a class='k-button' href='" + @Url.Action("Create", "Templates") + "/" + ViewData["EventId"] + "'>Add New Template</a></div>");
+                                         toolbar.ClientTemplate("<div class='toolbar'> <a class='k-button' href='" + @Url.Action("Create", "Templates", new { EventID= ViewData["EventId"] }) + "'>Add New Template</a></div>");
                                      })
                                  .Pageable()
                                  .Sortable()

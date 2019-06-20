@@ -3,10 +3,34 @@
     $("#Template").data("kendoDropDownList").wrapper.hide();// call for hide kendo dropdown call
     $("#Filter").data("kendoDropDownList").wrapper.hide();
     $("#grdInvitee").data('kendoGrid').wrapper.hide();
+    $("#windowSelected").kendoWindow({
+        width: "400px",
+        title: "Sent to Selected Invitees",
+        visible: false,
+        actions: [
+            //"Pin",
+           // "Minimize",
+           // "Maximize",
+            "Close"
+        ],
+        //close: onClose
+    });
+    $("#windowAll").kendoWindow({
+        width: "400px",
+        title: "Sent to All Invitees",
+        visible: false,
+        actions: [
+            //"Pin",
+            // "Minimize",
+            // "Maximize",
+            "Close"
+        ],
+        //close: onClose
+    });
 
 });
 
-function PostIDs() {
+function PostSelectedIDs() {
     var grid = $("#grdInvitee").data("kendoGrid");
     var dataItem = [];
     //var a = "test";
@@ -15,16 +39,62 @@ function PostIDs() {
         // dataItem.push( grid.dataItem($(this)).toJSON());
         dataItem.push(grid.dataItem($(this)).Id);
     });
-    //console.log(JSON.stringify(dataItem));
-    $.ajax({
-        method: "POST",
-        url: "/Invitee/SendMessage",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        data: JSON.stringify(dataItem)//JSON.stringify({dataItem })
-    }).done(function (data) {
-        console.log(data);
-    });
+    if (dataItem.length > 0) {
+
+        //console.log(JSON.stringify(dataItem));
+        $.ajax({
+            method: "POST",
+            url: "/Invitee/SendMessage",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(dataItem)//JSON.stringify({dataItem })
+        }).done(function (data) {
+            console.log(data);
+        });
+    }
+    else {
+        var myWindow = $("#windowSelected");
+        myWindow.data("kendoWindow").center().open();
+    }
+
+}
+function PostAllIDs() {
+    var grid = $("#grdInvitee").data("kendoGrid");
+    var dataItem = [];
+      
+    var data = grid.dataSource.data();
+    var totalNumber = data.length;
+
+    for (var i = 0; i < totalNumber; i++) {
+        var currentDataItem = data[i];
+       // dataItem[i] = currentDataItem.Id;
+        dataItem.push(currentDataItem.Id);
+    }
+
+    
+    //var a = "test";
+    //grid.dataSource.data().each(function () {
+    //    //dataItem.push(grid.dataItem($(this)));
+    //    // dataItem.push( grid.dataItem($(this)).toJSON());
+    //    dataItem.push(grid.dataItem($(this)).Id);
+    //});
+    if (dataItem.length > 0) {
+
+        //console.log(JSON.stringify(dataItem));
+        $.ajax({
+            method: "POST",
+            url: "/Invitee/SendMessage",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(dataItem)//JSON.stringify({dataItem })
+        }).done(function (data) {
+            console.log(data);
+        });
+    }
+    else {
+        var myWindow = $("#windowAll");
+        myWindow.data("kendoWindow").center().open();
+    }
 
 }
 
@@ -36,6 +106,11 @@ function onGridRowSelection(arg) {
     $("#selectedCount").html(selectedRows.length);
 
 }
+
+function getTemplateParameters(e) {
+
+}
+
 
 function additionalData(e) {
     var EventID = $("#Event").data("kendoDropDownList").value();

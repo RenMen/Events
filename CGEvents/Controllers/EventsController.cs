@@ -15,7 +15,6 @@ using Microsoft.Extensions.FileProviders;
 
 namespace CGEvents.Controllers
 {
-
     public class EventsController : Controller
     {
         private readonly MiscFormsContext _context;
@@ -150,7 +149,7 @@ namespace CGEvents.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster,string create,string template)
+        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDispName,EventDate,FormDeadline,AckText,Venue,Hotel,EventDateTo,Subject,MailHeader,MailBody,MailSignature,IsActive")] Models.EventMaster eventMaster,string create,string template,string import)
         {
            
             if (ModelState.IsValid)
@@ -165,6 +164,10 @@ namespace CGEvents.Controllers
                 else if (template!=null)
                         {
                     return RedirectToAction("Index", "Templates", new {id = eventMaster.EventId} );
+                }
+                else if (import != null)
+                {
+                    return RedirectToAction("Index", "Invitee", new { eid = eventMaster.EventId });
                 }
                 
             }
@@ -184,6 +187,7 @@ namespace CGEvents.Controllers
             {
                 return NotFound();
             }
+            ViewData["Title"] = eventMaster.EventDispName;
             return View(eventMaster);
         }
 

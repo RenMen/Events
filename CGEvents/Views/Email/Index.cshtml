@@ -1,9 +1,9 @@
 ﻿@using CGEvents.Models;
 @{
-    ViewData["Title"] = "Save the Date - " + ViewData["EventName"];
+   // ViewData["Title"] = "Save the Date - " + ViewData["EventName"];
     ViewData["Action"] = "Events";
     ViewData["EventIdB"] = ViewData["EventId"];
-    ViewData["CurrentPage"] = "'" + ViewData["EventName"] + "'" + " - Invitees Details";
+  //  ViewData["CurrentPage"] = "'" + ViewData["EventName"] + "'" + " - Invitees Details";
 
 }
 <div class="table-responsive">
@@ -39,9 +39,9 @@
                     {
                         source.Read(read =>
                         {
-                            read.Action("GetTemplates", "Email");
-                        });
-                    })
+                        read.Action("GetTemplates", "Email").Data("getTemplateParameters");
+                    });
+        })
                     .HtmlAttributes(new { style = "width: 100%" })
                 )
             </p>
@@ -89,7 +89,7 @@
                         .NoRecords(false)
                         .ToolBar(toolbar =>
                         {
-                            toolbar.ClientTemplate("<div class='row'><div class='col-xs-12 col-md-2'> <input type=button value='Sent All'  id='allInvitees' class='k-button' onclick='PostIDs()' />  </div><div class='col-xs-12 col-md-2'><a  id='selectedInvitees' class='k-button' href=''> Sent To Selected <span id='selectedCount' class='badge badge-pill badge-danger'></span> </a> </div>  <div class='col-xs-12 col-md-2'></div> <div class='col-xs-12 col-md-2'> <a id='newInvitee' class='k-button' href=''>Add New Invitee(s)</a></div>" +
+                            toolbar.ClientTemplate("<div class='row'><div class='col-xs-12 col-md-2'> <input type=button value='Sent All'  id='allInvitees' class='k-button' onclick='PostAllIDs()' />  </div><div class='col-xs-12 col-md-2'><a  id='selectedInvitees' class='k-button' onclick='PostSelectedIDs()'> Sent To Selected <span id='selectedCount' class='badge badge-pill badge-danger'></span> </a> </div>  <div class='col-xs-12 col-md-2'></div> <div class='col-xs-12 col-md-2'> <a id='newInvitee' class='k-button' href=''>Add New Invitee(s)</a></div>" +
                                 "<div class='col-xs-12 col-md-2'> <a  id='uploadInvitee' class='k-button' href=''> Import Invitees List </a>   </div> </div>");
                         })
                     .PersistSelection()
@@ -112,6 +112,14 @@
             </p>
         </div>
     </div>
+</div>
+<div id="windowSelected">
+    <h4>No Row(s) Selected</h4>
+    <p>Please select atleast one row</p>
+</div>
+<div id="windowAll">
+    <h4>No Row(s)</h4>
+    <p>Nothing to sent</p>
 </div>
 
 <script src="~/SiteJS/SiteJS.js"></script>

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CGEvents.Controllers
 {
-    [Route("CGEvents")]
-    public class CGEventsController : Controller
+    
+    public class CGEvents2DeleteController : Controller
     {
         //[Route("{view=Index}")]
         public IActionResult Index(string view)
